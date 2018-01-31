@@ -1,0 +1,19 @@
+For live music event api:
+=========================
+https://www.songkick.com/developer
+
+For Music news api (Album release):
+===================================
+https://developer.spotify.com/web-api/get-list-new-releases/
+
+Play music api:
+===============
+https://developers.deezer.com/
+
+MetaData (Name, year, ...):
+===========================
+https://www.discogs.com/developers/
+
+Lyrics:
+=======
+http://www.chartlyrics.com/api.aspx
