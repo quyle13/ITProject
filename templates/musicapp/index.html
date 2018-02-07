@@ -1,66 +1,66 @@
-<!DOCTYPE html>
-{% load staticfiles %}
-<html>
+{% extends 'musicapp/base.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-    <link rel="stylesheet" href="{% static "css/styles.min.css" %}">
-</head>
-
-<body>
-    <header>
-        <nav class="navbar navbar-default">
-            <div class="container">
-                <div class="navbar-header"><a class="navbar-brand" href="#"><i class="glyphicon glyphicon-music"></i><span class="text-title">MUSIC WEBSITE</span></a><button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div>
-                <div
-                    class="collapse navbar-collapse" id="navcol-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="active" role="presentation"><a href="#">Home </a></li>
-                        <li role="presentation"><a href="#">Sign In</a></li>
-                        <li role="presentation"><a href="#">Sign Up</a></li>
-                    </ul>
-            </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container" id="main-content"></div>
-    <div class="footer-dark">
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 col-md-push-6 item text">
-                        <h3>Company Name</h3>
-                        <p>Praesent sed lobortis mi. Suspendisse vel placerat ligula. Vivamus ac sem lacus. Ut vehicula rhoncus elementum. Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in justo.</p>
-                    </div>
-                    <div class="col-md-3 col-md-pull-6 col-sm-4 item">
-                        <h3>Services</h3>
-                        <ul>
-                            <li><a href="#">Web design</a></li>
-                            <li><a href="#">Development</a></li>
-                            <li><a href="#">Hosting</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3 col-md-pull-6 col-sm-4 item">
-                        <h3>About</h3>
-                        <ul>
-                            <li><a href="#">Company</a></li>
-                            <li><a href="#">Team</a></li>
-                            <li><a href="#">Careers</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-12 col-sm-4 item social"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a></div>
+{% block content %}
+<div class="row">
+    <div class="col-md-9 col-sm-9">
+        <div class="tab-block">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#top-songs" role="tab" data-toggle="tab">Top Songs</a></li>
+                <li><a href="#new-songs" role="tab" data-toggle="tab">New Songs</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
+                    <p>Content for tab 1.</p>
                 </div>
-                <p class="copyright">Company Name © 2016</p>
+                <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
+                    <p>Content for tab 2.</p>
+                </div>
             </div>
-        </footer>
+        </div>
+        <div class="tab-block">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#top-albums" role="tab" data-toggle="tab">Top Albums</a></li>
+                <li><a href="#new-albums" role="tab" data-toggle="tab">New Album</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
+                    <p>Content for tab 1.</p>
+                </div>
+                <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
+                    <p>Content for tab 2.</p>
+                </div>
+            </div>
+        </div>
+        <div class="tab-block">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#top-artists" role="tab" data-toggle="tab">Top Artists</a></li>
+                <li><a href="#new-artist" role="tab" data-toggle="tab">New Artists</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
+                    <p>Content for tab 1.</p>
+                </div>
+                <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
+                    <p>Content for tab 2.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</body>
-
-</html>
+    <div class="col-md-3 col-sm-3">
+        <div class="tab-block">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#upcoming-releases" role="tab" data-toggle="tab">Upcoming Releases</a></li>
+                <li><a href="#upcoming-events" role="tab" data-toggle="tab">Upcomming Events </a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active tab-container-vertical" role="tabpanel" id="upcoming-releases">
+                    <p>Content for tab 1.</p>
+                </div>
+                <div class="tab-pane tab-container-vertical" role="tabpanel" id="upcoming-events">
+                    <p>Content for tab 2.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

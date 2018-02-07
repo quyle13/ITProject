@@ -106,3 +106,5 @@ Design.bsdesign
 # database
 db.sqlite3
 .idea/
+design/
+*.iml
