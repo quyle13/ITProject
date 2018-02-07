@@ -5,3 +5,8 @@ Team member includes:
    + Nystrom
    + Ken
    + Quy
+
+
+To install project dependencies use
+
+`pip install -r requirements.txt`
