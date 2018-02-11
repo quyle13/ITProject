@@ -50,25 +50,11 @@
         <div class="clearfix"></div>
         <hr>
         <div id="comments">
-            <div class="row comment">
-                <div class="col-xs-1"><img></div>
-                <div class="col-xs-11">
-                    <p>Comment message</p>
-                </div>
-                <div class="clearfix"></div>
-            </div>
+            {% include 'musicapp/components/comment.html' %}
+            {% include 'musicapp/components/comment.html' %}
+            {% include 'musicapp/components/comment.html' %}
         </div>
-        <div id="new-comment">
-            <form>
-                <div class="row">
-                    <div class="col-xs-10"><input class="form-control" type="text" name="comment" required=""
-                                                  placeholder="Leave a comment on this album"></div>
-                    <div class="col-xs-2">
-                        <button class="btn btn-success" type="submit">comment</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        {% include 'musicapp/components/new_comment.html' with type='album' %}
     </div>
 
 {% endblock %}
