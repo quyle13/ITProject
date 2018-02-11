@@ -1,0 +1,69 @@
+{% extends 'musicapp/base.html' %}
+
+
+{% block content %}
+    {% include 'musicapp/rate_artist_modal.html' %}
+    <div class="relative">
+        <h2>Artist Name</h2>
+        <div id="rating"><i class="glyphicon glyphicon-star-empty"></i><i class="glyphicon glyphicon-star"></i><i
+                class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i
+                class="glyphicon glyphicon-star"></i></div>
+        <button class="btn btn-primary rate"
+                type="button" data-toggle="modal" data-target="#rate-modal">rate artist
+        </button>
+        <hr>
+    </div>
+    <div class="relative"><img class="profile-photo">
+        <h4>Details:</h4>
+        <div class="row">
+            <div class="col-sm-2 col-xs-3">
+                <p>Location:</p>
+                <p>First Release Date:&nbsp;</p>
+                <p>Genre:&nbsp;</p>
+            </div>
+            <div class="col-sm-10 col-xs-9">
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>Albums:</h4>
+        <div class="scroll-list">
+            <div class="card selectable"><a href="#"><img class="img-responsive"></a>
+                <p>Album Name</p>
+                <p>Artist</p><span class="text-capitalize album">Album</span>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="relative">
+        <h4>Comments:</h4>
+        <div class="clearfix"></div>
+        <hr>
+        <div id="comments">
+            <div class="row comment">
+                <div class="col-xs-1"><img></div>
+                <div class="col-xs-11">
+                    <p>Comment message</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div id="new-comment">
+            <form>
+                <div class="row">
+                    <div class="col-xs-10"><input class="form-control" type="text" name="comment" required=""
+                                                  placeholder="Leave a comment on this artist"></div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-success" type="submit">comment</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

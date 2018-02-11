@@ -37,3 +37,9 @@ def album(request, artist_name, album_name):
     context_dict = dict()
     context_dict['page_title'] = album_name + ' by: ' + artist_name
     return render(request, 'musicapp/album.html', context=context_dict)
+
+
+def artist(request, artist_name):
+    context_dict = dict()
+    context_dict['page_title'] = artist_name
+    return render(request, 'musicapp/artist.html', context=context_dict)
