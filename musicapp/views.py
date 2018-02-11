@@ -25,3 +25,9 @@ def profile(request, profile_id):
     context_dict = dict()
     context_dict['page_title'] = 'My Profile'
     return render(request, 'musicapp/profile.html', context=context_dict)
+
+
+def search(request):
+    context_dict = dict()
+    context_dict['page_title'] = 'Search for Songs, Albums, Artists'
+    return render(request, 'musicapp/search.html', context=context_dict)

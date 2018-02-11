@@ -1,0 +1,41 @@
+{% extends 'musicapp/base.html' %}
+
+{% block content %}
+    <form class="search-form">
+        <div class="input-group">
+            <div class="input-group-addon"><span><i class="glyphicon glyphicon-search"></i></span></div>
+            <input class="form-control" type="text" placeholder="I am looking for..">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="button">Search</button>
+            </div>
+        </div>
+    </form>
+    <div>
+        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
+            <p>Song</p>
+            <p>Album / Artist</p><span class="text-capitalize song">Song</span>
+            <div class="clearfix"></div>
+        </div>
+        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
+            <p>Album Name</p>
+            <p>Artist</p><span class="text-capitalize album">Album</span>
+            <div class="clearfix"></div>
+        </div>
+        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
+            <p>Artist Name</p><span class="text-capitalize artist">Artist</span>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <nav class="center">
+        <ul class="pagination">
+            <li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+            <li class="active"><a>1</a></li>
+            <li><a>2</a></li>
+            <li><a>3</a></li>
+            <li><a>4</a></li>
+            <li><a>5</a></li>
+            <li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
+        </ul>
+    </nav>
+{% endblock %}

@@ -28,7 +28,8 @@
         </div>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
-                <li role="presentation" {% if search_active %} class="active" {% endif %}><a href="#">Search</a></li>
+                <li role="presentation" {% if search_active %} class="active" {% endif %}><a
+                        href="{% url 'search' %}">Search</a></li>
                 <li role="presentation" {% if about_active %} class="active" {% endif %}><a href="#">About Us</a></li>
                 <li role="presentation" {% if contact_active %} class="active" {% endif %}><a href="#">Contact </a></li>
 
