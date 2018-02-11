@@ -30,8 +30,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li role="presentation" {% if search_active %} class="active" {% endif %}><a
                         href="{% url 'search' %}">Search</a></li>
-                <li role="presentation" {% if about_active %} class="active" {% endif %}><a href="#">About Us</a></li>
-                <li role="presentation" {% if contact_active %} class="active" {% endif %}><a href="#">Contact </a></li>
+                <li role="presentation" {% if about_active %} class="active" {% endif %}><a
+                        href="{% url 'about' %}">About Us</a></li>
+                <li role="presentation" {% if contact_active %} class="active" {% endif %}><a
+                        href="{% url 'contact' %}">Contact </a></li>
 
                 {% if user.is_authenticated %}
                     <li class="dropdown">

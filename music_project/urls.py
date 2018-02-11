@@ -20,6 +20,8 @@ from musicapp import views
 urlpatterns = [
     url(r'^$', views.index, name='home'),
     url(r'^register/$', views.register, name='register'),
+    url(r'^about/$', views.about, name='about'),
+    url(r'^contact/$', views.contact, name='contact'),
     url(r'^login/$', views.login, name='login'),
     url(r'^search/$', views.search, name='search'),
     url(r'^view/artist/(?P<artist_name>[\w\-]+)/$', views.artist, name='artist'),

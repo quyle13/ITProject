@@ -7,6 +7,18 @@ def index(request):
     return render(request, 'musicapp/index.html', context=context_dict)
 
 
+def contact(request):
+    context_dict = dict()
+    context_dict['page_title'] = 'Contact Us'
+    return render(request, 'musicapp/contact.html', context=context_dict)
+
+
+def about(request):
+    context_dict = dict()
+    context_dict['page_title'] = 'About Us'
+    return render(request, 'musicapp/about.html', context=context_dict)
+
+
 def register(request):
     context_dict = dict()
     context_dict['page_title'] = 'Register for Music App'
