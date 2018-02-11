@@ -1,0 +1,95 @@
+{% extends 'musicapp/base.html' %}
+
+{% block content %}
+    {% include 'musicapp/modals/rate_song.html' %}
+    <div class="relative">
+        <h2>Song Title</h2>
+        <div id="rating">
+            <i class="glyphicon glyphicon-star-empty"></i>
+            <i class="glyphicon glyphicon-star"></i>
+            <i class="glyphicon glyphicon-star"></i>
+            <i class="glyphicon glyphicon-star"></i>
+            <i class="glyphicon glyphicon-star"></i>
+        </div>
+        <button class="btn btn-primary rate"
+                type="button" data-toggle="modal" data-target="#rate-modal">
+            rate song
+        </button>
+        <hr>
+    </div>
+    <div class="relative">
+        <img class="profile-photo">
+        <h4>Details:</h4>
+        <div class="row">
+            <div class="col-sm-2 col-xs-3">
+                <p>Artist:</p>
+                <p>Album:</p>
+                <p>Location:</p>
+                <p>Release Date:&nbsp;</p>
+            </div>
+            <div class="col-sm-10 col-xs-9">
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <div id="tracks">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="card selectable track">
+                        <div class="col-xs-9">
+                            <h4>Song Title</h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <button class="btn btn-default control" type="button">
+                                <i class="fa fa-play-circle-o" title="Play song"></i>
+                                <i class="fa fa-pause-circle" title="Pause song"></i>
+                            </button>
+                            <button class="btn btn-default control" type="button" title="Add song to playlist">
+                                <i class="fa fa-music"></i>
+                            </button>
+                        </div>
+                        <div
+                                class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4 hidden-xs" id="lyrics">
+                    <h5>Lyrics:</h5>
+                    <hr>
+                    <p>Lyrics this song here</p>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="relative">
+        <h4>Comments:</h4>
+        <div class="clearfix"></div>
+        <hr>
+        <div id="comments">
+            <div class="row comment">
+                <div class="col-xs-1"><img></div>
+                <div class="col-xs-11">
+                    <p>Comment message</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div id="new-comment">
+            <form>
+                <div class="row">
+                    <div class="col-xs-10"><input class="form-control" type="text" name="comment" required=""
+                                                  placeholder="Leave a comment on this song"></div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-success" type="submit">comment</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

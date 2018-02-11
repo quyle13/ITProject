@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
     url(r'^view/artist/(?P<artist_name>[\w\-]+)/$', views.artist, name='artist'),
     url(r'^view/album/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/$', views.album, name='album'),
+    url(r'^view/song/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/(?P<song_title>[\w\-]+)/$',
+        views.song, name='song'),
     url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
     url(r'^playlist/(?P<playlist_name>[\w\-]+)/$', views.playlist, name='playlist'),
     url(r'^admin/', admin.site.urls, name='admin'),
