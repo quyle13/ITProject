@@ -1,0 +1,50 @@
+{% extends 'musicapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    {% include 'musicapp/components/edit_profile_modal.html' %}
+    <div class="relative">
+        <h2>Full Name</h2>
+        <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#edit-modal">
+            edit profile
+        </button>
+        <hr>
+    </div>
+    <div class="relative">
+        <img src="{% static 'img/andrew.jpg' %}" class="profile-photo">
+        <h4>Details:</h4>
+        <div class="row">
+            <div class="col-xs-2">
+                <p>Email:&nbsp;</p>
+                <p>Location:</p>
+                <p>Registered Since:&nbsp;</p>
+            </div>
+            <div class="col-xs-10">
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>My Playlists:</h4>
+        <div class="scroll-list">
+            {% include 'musicapp/components/display_item.html' with type='playlist' %}
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>My Playlist Songs:</h4>
+        <div id="tracks">
+            <div class="row">
+                <div class="col-sm-8">
+                    {% include 'musicapp/components/play_song.html' %}
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}

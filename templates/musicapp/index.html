@@ -1,66 +1,74 @@
 {% extends 'musicapp/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-9 col-sm-9">
-        <div class="tab-block">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#top-songs" role="tab" data-toggle="tab">Top Songs</a></li>
-                <li><a href="#new-songs" role="tab" data-toggle="tab">New Songs</a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
-                    <p>Content for tab 1.</p>
+    <div class="row">
+        <div class="col-md-9 col-sm-9">
+            <div class="tab-block">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#top-songs" role="tab" data-toggle="tab">Top Songs</a></li>
+                    <li><a href="#new-songs" role="tab" data-toggle="tab">New Songs</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
+                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                    </div>
+                    <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
+                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                    </div>
                 </div>
-                <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
-                    <p>Content for tab 2.</p>
+            </div>
+            <div class="tab-block">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#top-albums" role="tab" data-toggle="tab">Top Albums</a></li>
+                    <li><a href="#new-albums" role="tab" data-toggle="tab">New Album</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
+                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                    </div>
+                    <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
+                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-block">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#top-artists" role="tab" data-toggle="tab">Top Artists</a></li>
+                    <li><a href="#new-artist" role="tab" data-toggle="tab">New Artists</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
+                        {% include 'musicapp/components/display_item.html' with type='artist' %}
+                    </div>
+                    <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
+                        {% include 'musicapp/components/display_item.html' with type='artist' %}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="tab-block">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#top-albums" role="tab" data-toggle="tab">Top Albums</a></li>
-                <li><a href="#new-albums" role="tab" data-toggle="tab">New Album</a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
-                    <p>Content for tab 1.</p>
-                </div>
-                <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
-                    <p>Content for tab 2.</p>
-                </div>
-            </div>
-        </div>
-        <div class="tab-block">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#top-artists" role="tab" data-toggle="tab">Top Artists</a></li>
-                <li><a href="#new-artist" role="tab" data-toggle="tab">New Artists</a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
-                    <p>Content for tab 1.</p>
-                </div>
-                <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
-                    <p>Content for tab 2.</p>
+        <div class="col-md-3 col-sm-3">
+            <div class="tab-block">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#upcoming-releases" role="tab" data-toggle="tab">Upcoming Releases</a></li>
+                    <li><a href="#upcoming-events" role="tab" data-toggle="tab">Upcomming Events </a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active tab-container-vertical" role="tabpanel" id="upcoming-releases">
+                        <div class="clipping">
+                            <h5>Title</h5>
+                            <hr><a href="#">More</a>
+                            <p>asfmsdmfo foas dao ,so mafo amso,oasd oaosda osd o asod,aosd,aos,d a,sda os,doa,s,daosm d amosdanfsoam sdnasida sosmf oa msom damfoamo sf,asda ofmasd afmaosd</p>
+                        </div>
+                    </div>
+                    <div class="tab-pane tab-container-vertical" role="tabpanel" id="upcoming-events">
+                        <div class="clipping">
+                            <h5>Title</h5>
+                            <hr><a href="#">More</a>
+                            <p>asfmsdmfo foas dao ,so mafo amso,oasd oaosda osd o asod,aosd,aos,d a,sda os,doa,s,daosm d amosdanfsoam sdnasida sosmf oa msom damfoamo sf,asda ofmasd afmaosd</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-3">
-        <div class="tab-block">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#upcoming-releases" role="tab" data-toggle="tab">Upcoming Releases</a></li>
-                <li><a href="#upcoming-events" role="tab" data-toggle="tab">Upcomming Events </a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active tab-container-vertical" role="tabpanel" id="upcoming-releases">
-                    <p>Content for tab 1.</p>
-                </div>
-                <div class="tab-pane tab-container-vertical" role="tabpanel" id="upcoming-events">
-                    <p>Content for tab 2.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

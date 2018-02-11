@@ -1,0 +1,49 @@
+{% extends 'musicapp/base.html' %}
+
+
+{% block content %}
+    {% include 'musicapp/components/rate_modal.html' with type='Artist' %}
+    <div class="relative">
+        <h2>Artist Name</h2>
+        <div id="rating"><i class="glyphicon glyphicon-star-empty"></i><i class="glyphicon glyphicon-star"></i><i
+                class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i
+                class="glyphicon glyphicon-star"></i></div>
+        <button class="btn btn-primary rate"
+                type="button" data-toggle="modal" data-target="#rate-modal">rate artist
+        </button>
+        <hr>
+    </div>
+    <div class="relative"><img class="profile-photo">
+        <h4>Details:</h4>
+        <div class="row">
+            <div class="col-sm-2 col-xs-3">
+                <p>Location:</p>
+                <p>First Release Date:&nbsp;</p>
+                <p>Genre:&nbsp;</p>
+            </div>
+            <div class="col-sm-10 col-xs-9">
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>Albums:</h4>
+        <div class="scroll-list">
+            {% include 'musicapp/components/display_item.html' with type='album' %}
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="relative">
+        <h4>Comments:</h4>
+        <div class="clearfix"></div>
+        <hr>
+        <div id="comments">
+            {% include 'musicapp/components/comment.html' %}
+        </div>
+        {% include 'musicapp/components/new_comment.html' with type='artist' %}
+    </div>
+{% endblock %}

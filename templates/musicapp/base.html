@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% if page_title %}{{ page_title }} {% endif %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="{% static 'css/styles.min.css' %}">
@@ -27,9 +28,12 @@
         </div>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
-                <li role="presentation"><a href="#">Search</a></li>
-                <li role="presentation"><a href="#">About Us</a></li>
-                <li role="presentation"><a href="#">Contact </a></li>
+                <li role="presentation" {% if search_active %} class="active" {% endif %}><a
+                        href="{% url 'search' %}">Search</a></li>
+                <li role="presentation" {% if about_active %} class="active" {% endif %}><a
+                        href="{% url 'about' %}">About Us</a></li>
+                <li role="presentation" {% if contact_active %} class="active" {% endif %}><a
+                        href="{% url 'contact' %}">Contact </a></li>
 
                 {% if user.is_authenticated %}
                     <li class="dropdown">
@@ -43,8 +47,10 @@
                         </ul>
                     </li>
                 {% else %}
-                    <li role="presentation"><a href="{% url 'register' %}">Register</a></li>
-                    <li role="presentation"><a href="{% url 'login' %}">Login</a></li>
+                    <li role="presentation" {% if register_active %} class="active" {% endif %}><a
+                            href="{% url 'register' %}">Register</a></li>
+                    <li role="presentation" {% if login_active %} class="active" {% endif %}><a
+                            href="{% url 'login' %}">Login</a></li>
                 {% endif %}
 
             </ul>
