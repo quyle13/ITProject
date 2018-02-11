@@ -10,18 +10,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Song</p>
-                            <p>Album / Artist</p><span class="text-capitalize song">Song</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='song' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Song</p>
-                            <p>Album / Artist</p><span class="text-capitalize song">Song</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='song' %}
                     </div>
                 </div>
             </div>
@@ -32,18 +24,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Album Name</p>
-                            <p>Artist</p><span class="text-capitalize album">Album</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='album' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Album Name</p>
-                            <p>Artist</p><span class="text-capitalize album">Album</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='album' %}
                     </div>
                 </div>
             </div>
@@ -54,16 +38,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Artist Name</p><span class="text-capitalize artist">Artist</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='artist' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
-                        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                            <p>Artist Name</p><span class="text-capitalize artist">Artist</span>
-                            <div class="clearfix"></div>
-                        </div>
+                        {% include 'musicapp/components/display_item.html' with type='artist' %}
                     </div>
                 </div>
             </div>

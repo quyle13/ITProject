@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    {% include 'musicapp/modals/edit_profile.html' %}
+    {% include 'musicapp/components/edit_profile_modal.html' %}
     <div class="relative">
         <h2>Full Name</h2>
         <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#edit-modal">
@@ -31,10 +31,7 @@
     <div class="relative">
         <h4>My Playlists:</h4>
         <div class="scroll-list">
-            <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                <p>Playlist Name</p><span class="text-capitalize playlist">Playlist</span>
-                <div class="clearfix"></div>
-            </div>
+            {% include 'musicapp/components/display_item.html' with type='playlist' %}
         </div>
         <div class="clearfix"></div>
         <hr>
@@ -44,22 +41,7 @@
         <div id="tracks">
             <div class="row">
                 <div class="col-sm-8">
-                    <div class="card selectable track">
-                        <div class="col-xs-9">
-                            <h4>Heading</h4>
-                        </div>
-                        <div class="col-xs-3">
-                            <button class="btn btn-default control" type="button">
-                                <i class="fa fa-play-circle-o" title="Play song"></i>
-                                <i class="fa fa-pause-circle" title="Pause song"></i>
-                            </button>
-                            <button class="btn btn-default control" type="button"
-                                    title="Add song to playlist">
-                                <i class="fa fa-music"></i>
-                            </button>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
+                    {% include 'musicapp/components/play_song.html' %}
                 </div>
             </div>
         </div>

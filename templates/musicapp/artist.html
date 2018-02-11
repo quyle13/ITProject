@@ -2,7 +2,7 @@
 
 
 {% block content %}
-    {% include 'musicapp/modals/rate_artist.html' %}
+    {% include 'musicapp/components/rate_modal.html' with type='Artist' %}
     <div class="relative">
         <h2>Artist Name</h2>
         <div id="rating"><i class="glyphicon glyphicon-star-empty"></i><i class="glyphicon glyphicon-star"></i><i
@@ -33,11 +33,7 @@
     <div class="relative">
         <h4>Albums:</h4>
         <div class="scroll-list">
-            <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-                <p>Album Name</p>
-                <p>Artist</p><span class="text-capitalize album">Album</span>
-                <div class="clearfix"></div>
-            </div>
+            {% include 'musicapp/components/display_item.html' with type='album' %}
         </div>
         <div class="clearfix"></div>
     </div>

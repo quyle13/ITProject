@@ -1,0 +1,11 @@
+<div class="card selectable">
+    <a href="#">
+        <img class="img-responsive">
+    </a>
+    {% if type == 'song' %} <p>Song</p> <p>Album / Artist</p> {% endif %}
+    {% if type == 'album' %} <p>Album</p> <p>Artist</p> {% endif %}
+    {% if type == 'artist' %} <p>Artist Name</p> {% endif %}
+    {% if type == 'playlist' %} <p>Playlist Name</p> {% endif %}
+    <span class="text-capitalize {{ type }}">{{ type }}</span>
+    <div class="clearfix"></div>
+</div>

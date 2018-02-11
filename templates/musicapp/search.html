@@ -10,21 +10,11 @@
             </div>
         </div>
     </form>
-    <div>
-        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-            <p>Song</p>
-            <p>Album / Artist</p><span class="text-capitalize song">Song</span>
-            <div class="clearfix"></div>
-        </div>
-        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-            <p>Album Name</p>
-            <p>Artist</p><span class="text-capitalize album">Album</span>
-            <div class="clearfix"></div>
-        </div>
-        <div class="card selectable"><a href="#"><img class="img-responsive"></a>
-            <p>Artist Name</p><span class="text-capitalize artist">Artist</span>
-            <div class="clearfix"></div>
-        </div>
+    <div id="search-results">
+        {% include 'musicapp/components/display_item.html' with type='song' %}
+        {% include 'musicapp/components/display_item.html' with type='album' %}
+        {% include 'musicapp/components/display_item.html' with type='song' %}
+        {% include 'musicapp/components/display_item.html' with type='artist' %}
     </div>
     <div class="clearfix"></div>
     <nav class="center">

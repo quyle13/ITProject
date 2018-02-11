@@ -1,7 +1,7 @@
 {% extends 'musicapp/base.html' %}
 
 {% block content %}
-    {% include 'musicapp/modals/rate_song.html' %}
+    {% include 'musicapp/components/rate_modal.html' with type='Song' %}
     <div class="relative">
         <h2>Song Title</h2>
         <div id="rating">
@@ -41,22 +41,7 @@
         <div id="tracks">
             <div class="row">
                 <div class="col-sm-8">
-                    <div class="card selectable track">
-                        <div class="col-xs-9">
-                            <h4>Song Title</h4>
-                        </div>
-                        <div class="col-xs-3">
-                            <button class="btn btn-default control" type="button">
-                                <i class="fa fa-play-circle-o" title="Play song"></i>
-                                <i class="fa fa-pause-circle" title="Pause song"></i>
-                            </button>
-                            <button class="btn btn-default control" type="button" title="Add song to playlist">
-                                <i class="fa fa-music"></i>
-                            </button>
-                        </div>
-                        <div
-                                class="clearfix"></div>
-                    </div>
+                    {% include 'musicapp/components/play_song.html' %}
                 </div>
                 <div class="col-sm-4 hidden-xs" id="lyrics">
                     <h5>Lyrics:</h5>
