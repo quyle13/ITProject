@@ -1,0 +1,68 @@
+{% extends 'musicapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    {% include 'musicapp/change_details.html' %}
+    <div class="relative">
+        <h2>Full Name</h2>
+        <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#edit-modal">
+            edit profile
+        </button>
+        <hr>
+    </div>
+    <div class="relative">
+        <img src="{% static 'img/andrew.jpg' %}" class="profile-photo">
+        <h4>Details:</h4>
+        <div class="row">
+            <div class="col-xs-2">
+                <p>Email:&nbsp;</p>
+                <p>Location:</p>
+                <p>Registered Since:&nbsp;</p>
+            </div>
+            <div class="col-xs-10">
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+                <p>Paragraph</p>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>My Playlists:</h4>
+        <div id="playlist">
+            <div class="card selectable"><a href="#"><img class="img-responsive"></a>
+                <p>Playlist Name</p><span class="text-capitalize playlist">Playlist</span>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>My Playlist Songs:</h4>
+        <div id="tracks">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="card selectable track">
+                        <div class="col-xs-9">
+                            <h4>Heading</h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <button class="btn btn-default control" type="button">
+                                <i class="fa fa-play-circle-o" title="Play song"></i>
+                                <i class="fa fa-pause-circle" title="Pause song"></i>
+                            </button>
+                            <button class="btn btn-default control" type="button"
+                                    title="Add song to playlist">
+                                <i class="fa fa-music"></i>
+                            </button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}

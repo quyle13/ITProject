@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^$', views.index, name='home'),
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.login, name='login'),
+    url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
     url(r'^admin/', admin.site.urls, name='admin'),
 ]
