@@ -1,0 +1,39 @@
+{% extends 'musicapp/base.html' %}
+
+{% block content %}
+<div class="relative">
+    <h2>Playlist Name</h2>
+    <hr>
+</div>
+<div class="relative">
+    <h4>Songs:</h4>
+    <div id="tracks">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="card selectable track">
+                    <div class="col-xs-9">
+                        <h4>Song Title</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <button class="btn btn-default control" type="button">
+                            <i class="fa fa-play-circle-o" title="Play song"></i>
+                            <i class="fa fa-pause-circle" title="Pause song"></i>
+                        </button>
+                        <button class="btn btn-default control" type="button"
+                                title="Add song to playlist">
+                            <i class="fa fa-music"></i>
+                        </button>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="col-sm-4 hidden-xs" id="lyrics">
+                <h5>Lyrics:</h5>
+                <hr>
+                <p>Lyrics for playing song here</p>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+{% endblock %}
