@@ -31,3 +31,9 @@ def search(request):
     context_dict = dict()
     context_dict['page_title'] = 'Search for Songs, Albums, Artists'
     return render(request, 'musicapp/search.html', context=context_dict)
+
+
+def album(request, artist_name, album_name):
+    context_dict = dict()
+    context_dict['page_title'] = album_name + ' by: ' + artist_name
+    return render(request, 'musicapp/album.html', context=context_dict)
