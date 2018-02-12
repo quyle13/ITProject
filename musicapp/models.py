@@ -1,10 +1,20 @@
 from django.db import models
 
 # Create your models here.
+
+
+class User(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    email = models.EmailField()
+
+
 class Genre(models.Model):
     Name = models.CharField(max_length=128,unique=True)
+    
     def __str__(self):
         return "%s the genre" % self.name
+
 
 class Artist(models.Model):
     Name = models.CharField(max_length=400, unique=True)
@@ -15,9 +25,9 @@ class Artist(models.Model):
     Comment = models.TextField(None)
     PersonalWebsite = models.CharField(max_length=400)
 
-
     def __str__(self):
         return "Artist Name %s " % Name
+
 
 class Song(models.Model):
     Title = models.CharField(max_length=200)
@@ -38,8 +48,11 @@ class Comment(models.Model):
     RatingType = models.CharField(max_length=128)
     ItemID = models.IntegerField()
     RatingDate = models.DateField()
+
     def __str__(self):
         return "%s is content of comment" % self.Content
+
+
 class Rating(models.Model):
     ItemID = models.IntegerField()
     RatingType = models.CharField(max_length=128)
@@ -61,9 +74,9 @@ class Album(models.Model):
     Rating = models.FloatField(default=0)
     Comment = models.TextField(None)
     Song = models.ForeignKey(Song)
+
     def __str__(self):
         return "Album Name %s " % Title
-
 
 
 class PlayList(models.Model):
@@ -71,6 +84,7 @@ class PlayList(models.Model):
     UserID = models.IntegerField()
     Song = models.ForeignKey(Song)
     CreatedDate = models.DateField()
+
     def __str__(self):
         return "Play List Name %s " % PlayListName
 

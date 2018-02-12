@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^about/$', views.about, name='about'),
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^search/$', views.search, name='search'),
     url(r'^view/artist/(?P<artist_name>[\w\-]+)/$', views.artist, name='artist'),
     url(r'^view/album/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/$', views.album, name='album'),

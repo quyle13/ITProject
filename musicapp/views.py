@@ -1,4 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from musicapp.forms import UserForm
 
 
 def index(request):
@@ -23,6 +28,21 @@ def register(request):
     context_dict = dict()
     context_dict['page_title'] = 'Register for Music App'
     context_dict['register_active'] = True
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        context_dict['user_form'] = user_form
+        if user_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+            auth_login(request, user)
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            print(user_form.errors)
+
+    else:
+        user_form = UserForm()
     return render(request, 'musicapp/register.html', context=context_dict)
 
 
@@ -30,7 +50,25 @@ def login(request):
     context_dict = dict()
     context_dict['page_title'] = 'Login to Music App'
     context_dict['login_active'] = True
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                auth_login(request, user)
+                return HttpResponseRedirect(reverse('home'))
+            else:
+                context_dict['error_msg'] = "Your account is disabled."
+                return render(request, 'musicapp/login.html', context=context_dict)
+        else:
+            context_dict['error_msg'] = "Username and password does not match "
     return render(request, 'musicapp/login.html', context=context_dict)
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('home'))
 
 
 def profile(request, profile_id):
@@ -67,3 +105,5 @@ def song(request, artist_name, album_name, song_title):
     context_dict = dict()
     context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
     return render(request, 'musicapp/song.html', context=context_dict)
+
+
