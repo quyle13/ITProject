@@ -37,12 +37,12 @@
 
                 {% if user.is_authenticated %}
                     <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Account
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">@{{ user.username }}
                             <span class="caret"></span>
                             <img src="{% static 'img/andrew.jpg' %}">
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li role="presentation"><a href="#">Profile </a></li>
+                            <li role="presentation"><a href="{% url 'profile' user.id %}">Profile </a></li>
                             <li role="presentation"><a href="{% url 'logout' %}">Logout </a></li>
                         </ul>
                     </li>
