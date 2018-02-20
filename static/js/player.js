@@ -1,30 +1,29 @@
-$(document).ready(function() {
+/* Global element */
+var songState =
+{
+  PLAY:  1,
+  PAUSE: 2,
+  STOP:  3,
+};
 
-	var songState =
-	{
-	  PLAY:  1,
-	  PAUSE: 2,
-	  STOP:  3,
-	};
+var volumeState =
+{
+  MUTE: 1,
+  LOUD: 2,
+};
 
-	var volumeState =
-	{
-	  MUTE: 1,
-	  LOUD: 2,
-	};
+song   = new Audio();
+state  = songState.STOP;
+volume = volumeState.LOUD;
+song.preload = "auto";
 
-	// Get classes
-	container = $('.container');
-	cover 	  = $('.cover');
-	player 	  = $('.player');
-
-	song   = new Audio();
-	state  = songState.STOP;
-	volume = volumeState.LOUD;
-
-	song.preload = "auto"
-
-	// Get the state of the player save in the cookie --------------------------
+/*
+* This function update the time, volume and source of the music by accessing to
+* the cookies which contain the different value
+*/
+var updateData = function()
+{
+	// Get the state of the player save in the cookie
 	if(typeof Cookies.get('song_state') !== 'undefined') {
 		state = Cookies.get('song_state');
 	}
@@ -37,22 +36,49 @@ $(document).ready(function() {
 		song.src = Cookies.get('song_src');
 	}
 
-	if(typeof Cookies.get('volume') !== 'undefined' && volume != volumeState.MUTED) {
+	if(typeof Cookies.get('volume') !== 'undefined' && volume !== volumeState.MUTED) {
 		song.volume = Cookies.get('volume');
 	}
 
 	if( typeof Cookies.get('song_time') !== 'undefined') {
 		song.currentTime = Cookies.get('song_time');
 	}
-	// -------------------------------------------------------------------------
 
-	// TODO: Set correctly the right song displayed
-
-	if(state == songState.PLAY) {
-		song.play();
+	// Get the current element that is binded to the music
+	var playerList = document.querySelectorAll("#player");
+	for (i = 0; i < playerList.length; i++) {
+		if(playerList[i].src = song.src) {
+			var player = playerList[i];
+		}
 	}
 
-	$('.btn').click( function(ev) {
+	// Start the music if already started and update the button shape
+	if(state == songState.PLAY && typeof player !== 'undefined') {
+		song.play();
+		player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+	}
+	else if(typeof player !== 'undefined') {
+		player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
+	}
+};
+
+
+/*
+*  Called when the page is showed, when back/forwards button clicked as well.
+*  Update the different element, current time, song played, state of the button
+*  to stay consistant between pages.
+*/
+$(window).bind("pageshow", function() {updateData();});
+
+/*
+*  Manage the different actions regarding the play button and save the diffrent
+*  State of the song.
+*/
+$(document).ready(function() {
+
+	// updateData();
+
+	$('#player').click( function(ev) {
 		ev.preventDefault();
 
 		// Control if another song need to be played
@@ -70,11 +96,13 @@ $(document).ready(function() {
 			song.pause();
 			state = songState.PAUSE;
 			Cookies.set('song_state', state, {expires: 1 });
+			$(this).html('<i class="fa fa-play-circle-o" title="Play song"></i>');
 		}
 		else {
 			song.play();
 			state = songState.PLAY;
 			Cookies.set('song_state', state, {expires: 1 });
+			$(this).html('<i class="fa fa-pause-circle" title="Pause song"></i>');
 		}
 	});
 
@@ -112,12 +140,14 @@ $(document).ready(function() {
 	// $("#volumeBar").bind("change", function() {
 	// });
 
+	// Called when the song's time has changed
 	song.addEventListener('timeupdate', function () {
 		Cookies.set('song_time', song.currentTime, {expires: 1 });
 		$('#timeBar').attr('max',song.duration);
 		$("#timeBar").attr('value', parseInt(song.currentTime, 10));
 	});
 
+	// Called when the song has ended
 	song.addEventListener('ended', function() {
 		this.stop();
 		// TODO: Get and Play next song
