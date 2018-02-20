@@ -1,12 +1,25 @@
 <div id="new-comment">
-    <form>
-        <div class="row">
-            <div class="col-xs-10">
-                <input class="form-control" type="text" name="comment" required=""
-                       placeholder="Leave a comment on this {{ type }}"></div>
-            <div class="col-xs-2">
-                <button class="btn btn-success" type="submit">comment</button>
+    <form action="{% url 'comment_post' %}" method="post">
+        {% csrf_token %}
+        {% if user.is_authenticated %}
+            {{ comment_form.author }}
+            {{ comment_form.artist }}
+            {{ comment_form.album }}
+            {{ comment_form.song }}
+            <div class="row">
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" name="comment" required=""
+                           placeholder="Leave a comment on this {{ type }}"></div>
+                <div class="col-xs-2">
+                    <button class="btn btn-success" type="submit">comment</button>
+                </div>
             </div>
-        </div>
+        {% else %}
+            <div class="row">
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" name="comment" required=""
+                           placeholder="Login fot comment {{ type }}"></div>
+            </div>
+        {% endif %}
     </form>
 </div>

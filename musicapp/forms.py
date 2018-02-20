@@ -23,3 +23,13 @@ class UserForm(forms.ModelForm):
         if email_count:
             raise forms.ValidationError('Email already exists')
         return email
+
+
+class CommentForm(forms.Form):
+    author = forms.CharField(widget=forms.HiddenInput())
+    comment = forms.CharField(widget=forms.TextInput())
+    artist = forms.CharField(widget=forms.HiddenInput(), required=False)
+    album = forms.CharField(widget=forms.HiddenInput(), required=False)
+    song = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+

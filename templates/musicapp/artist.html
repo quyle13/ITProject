@@ -1,6 +1,4 @@
 {% extends 'musicapp/base.html' %}
-
-
 {% block content %}
     {% include 'musicapp/components/rate_modal.html' with type='Artist' %}
     <div class="relative">
@@ -44,6 +42,6 @@
         <div id="comments">
             {% include 'musicapp/components/comment.html' %}
         </div>
-        {% include 'musicapp/components/new_comment.html' with type='artist' %}
-    </div>
+            {% include 'musicapp/components/new_comment.html' with type='artist' %}
+        </div>
 {% endblock %}

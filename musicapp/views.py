@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm
+from musicapp.forms import UserForm, CommentForm
+from .models import *
 
 
 def index(request):
@@ -89,21 +90,81 @@ def search(request):
     return render(request, 'musicapp/search.html', context=context_dict)
 
 
-def artist(request, artist_name):
-    context_dict = dict()
-    context_dict['page_title'] = artist_name
-    return render(request, 'musicapp/artist.html', context=context_dict)
-
-
-def album(request, artist_name, album_name):
-    context_dict = dict()
-    context_dict['page_title'] = album_name + ' by: ' + artist_name
-    return render(request, 'musicapp/album.html', context=context_dict)
+# def artist(request, artist_name):
+#     context_dict = dict()
+#     context_dict['page_title'] = artist_name
+#     return render(request, 'musicapp/artist.html', context=context_dict)
+#
+#
+# def album(request, artist_name, album_name):
+#     context_dict = dict()
+#     context_dict['page_title'] = album_name + ' by: ' + artist_name
+#     return render(request, 'musicapp/album.html', context=context_dict)
 
 
 def song(request, artist_name, album_name, song_title):
-    context_dict = dict()
-    context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
-    return render(request, 'musicapp/song.html', context=context_dict)
+    # context_dict = dict()
+    # context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
+    comment_form = CommentForm({'author': request.user.username,
+                                'artist': artist_name,
+                                'album': album_name,
+                                'song': song_title})
+    try:
+        comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song=song_title).order_by('id')
+        comment_list = []
+        for com in comments:
+            comment_list.append(com)
+    except Exception as e:
+        print(e)
+    return render(request, 'musicapp/song.html', locals())
+
+
+def artist(request, artist_name):
+    comment_form = CommentForm({'author': request.user.username,
+                                'artist': artist_name})
+    try:
+        comments = Comment.objects.filter(Artist=artist_name, Album='', Song='').order_by('id')
+        comment_list = []
+        for com in comments:
+            comment_list.append(com)
+    except Exception as e:
+        print(e)
+    return render(request, 'musicapp/artist.html', locals())
+
+
+def album(request, artist_name, album_name):
+    # context_dict = dict()
+    # context_dict['page_title'] = album_name + ' by: ' + artist_name
+
+    comment_form = CommentForm({'author': request.user.username,
+                                'artist': artist_name,
+                                'album': album_name})
+    try:
+        comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song='').order_by('id')
+        comment_list = []
+        for com in comments:
+            comment_list.append(com)
+    except Exception as e:
+        print(e)
+
+    return render(request, 'musicapp/album.html', locals())
+
+
+def comment_post(request):
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            com = Comment.objects.create(Username=comment_form.cleaned_data["author"],
+                                         Content=comment_form.cleaned_data["comment"],
+                                         Artist=comment_form.cleaned_data["artist"],
+                                         Album=comment_form.cleaned_data["album"],
+                                         Song=comment_form.cleaned_data["song"])
+            com.save()
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            return HttpResponse("error1")
+
+    return HttpResponse("error2")
+
 
 

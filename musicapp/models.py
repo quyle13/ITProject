@@ -1,5 +1,5 @@
 from django.db import models
-
+from django import forms
 # Create your models here.
 
 
@@ -10,10 +10,10 @@ class User(models.Model):
 
 
 class Genre(models.Model):
-    Name = models.CharField(max_length=128,unique=True)
+    Name = models.CharField(max_length=128, unique=True)
     
     def __str__(self):
-        return "%s the genre" % self.name
+        return "%s the genre" % self.Name
 
 
 class Artist(models.Model):
@@ -26,7 +26,7 @@ class Artist(models.Model):
     PersonalWebsite = models.CharField(max_length=400)
 
     def __str__(self):
-        return "Artist Name %s " % Name
+        return "Artist Name %s " % self.Name
 
 
 class Song(models.Model):
@@ -34,7 +34,7 @@ class Song(models.Model):
     Artist = models.ForeignKey(Artist)
     URL = models.URLField()
     ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre,on_delete = models.CASCADE,
+    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE,
                                  primary_key=True)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(default="")
@@ -44,10 +44,14 @@ class Song(models.Model):
 
 
 class Comment(models.Model):
-    Content = models.CharField(max_length=40000)
-    RatingType = models.CharField(max_length=128)
-    ItemID = models.IntegerField()
-    RatingDate = models.DateField()
+    Username = models.CharField(max_length=50)
+    Content = models.TextField(max_length=1000)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    # RatingType = models.CharField(max_length=128)
+    # ItemID = models.IntegerField()
+    # RatingDate = models.DateField()
 
     def __str__(self):
         return "%s is content of comment" % self.Content
@@ -65,18 +69,19 @@ class Rating(models.Model):
 
 
 class Album(models.Model):
+    ItemID = models.IntegerField(unique=True, default=0)
     Title = models.CharField(max_length=400)
     Artist = models.OneToOneField(Artist, models.CASCADE)
     URL = models.URLField()
     UploadDate = models.DateField()
     ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre,on_delete=models.CASCADE)
+    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(None)
     Song = models.ForeignKey(Song)
 
     def __str__(self):
-        return "Album Name %s " % Title
+        return "Album Name %s " % self.Title
 
 
 class PlayList(models.Model):
@@ -86,5 +91,5 @@ class PlayList(models.Model):
     CreatedDate = models.DateField()
 
     def __str__(self):
-        return "Play List Name %s " % PlayListName
+        return "Play List Name %s " % self.PlayListName
 

@@ -13,9 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from musicapp import views
+from musicapp.views import *
+
 
 urlpatterns = [
     url(r'^$', views.index, name='home'),
@@ -32,4 +34,6 @@ urlpatterns = [
     url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
     url(r'^playlist/(?P<playlist_name>[\w\-]+)/$', views.playlist, name='playlist'),
     url(r'^admin/', admin.site.urls, name='admin'),
+    url(r'^components/new_comment$', views.comment_post, name='comment_post'),
+    # url(r'^test/$', views.test, name='test')
 ]
