@@ -56,12 +56,13 @@ var updateData = function()
 	if(state == songState.PLAY && typeof player !== 'undefined') {
 		song.play();
 		player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+		$('#header-player').html('<i class="fa fa-pause-circle" title="Pause song"></i>');
 	}
 	else if(typeof player !== 'undefined') {
 		player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
+		$('#header-player').html('<i class="fa fa-play-circle-o" title="Play song"></i>');
 	}
 };
-
 
 /*
 *  Called when the page is showed, when back/forwards button clicked as well.
@@ -77,6 +78,29 @@ $(window).bind("pageshow", function() {updateData();});
 $(document).ready(function() {
 
 	// updateData();
+
+	$('#header-player').click( function(ev) {
+		ev.preventDefault();
+
+		// Play/Pause the song and modify the state
+		if(state == songState.PLAY) {
+			song.pause();
+			state = songState.PAUSE;
+			Cookies.set('song_state', state, {expires: 1 });
+
+			$(this).html('<i class="fa fa-play-circle-o" title="Play song"></i>');
+			player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
+
+		}
+		else {
+			song.play();
+			state = songState.PLAY;
+			Cookies.set('song_state', state, {expires: 1 });
+
+			$(this).html('<i class="fa fa-pause-circle" title="Pause song"></i>');
+			player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+		}
+	});
 
 	$('#player').click( function(ev) {
 		ev.preventDefault();
@@ -97,12 +121,14 @@ $(document).ready(function() {
 			state = songState.PAUSE;
 			Cookies.set('song_state', state, {expires: 1 });
 			$(this).html('<i class="fa fa-play-circle-o" title="Play song"></i>');
+			$('#header-player').html('<i class="fa fa-play-circle-o" title="Play song"></i>');
 		}
 		else {
 			song.play();
 			state = songState.PLAY;
 			Cookies.set('song_state', state, {expires: 1 });
 			$(this).html('<i class="fa fa-pause-circle" title="Pause song"></i>');
+			$('#header-player').html('<i class="fa fa-pause-circle" title="Pause song"></i>');
 		}
 	});
 
@@ -150,7 +176,7 @@ $(document).ready(function() {
 	// Called when the song has ended
 	song.addEventListener('ended', function() {
 		this.stop();
-		// TODO: Get and Play next song
+		// TODO: Get and Play next song and change player object
 	}, false);
 
 	song.addEventListener('canplay', function() {});
