@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from musicapp.forms import UserForm
 
+import requests
 
 def index(request):
     context_dict = dict()
@@ -86,6 +87,49 @@ def playlist(request, playlist_name):
 def search(request):
     context_dict = dict()
     context_dict['page_title'] = 'Search for Songs, Albums, Artists'
+
+    def searchRequest(name="", conn="", artist="", album=""):
+
+        if conn == "":
+            searchRequest(name, conn="artist")
+            searchRequest(name, conn="album")
+            searchRequest(name, conn="track")
+
+        # Send request to search information
+        result = requests.get("https://api.deezer.com/search/" + conn + "?", params={'q':name})
+
+        # Check if the HTTP response is OK
+        if result.status_code == 200:
+            result = result.json()
+
+            # Browse the different element in the JSON answer
+            for i in range(result['total']):
+                data = result['data'][i]
+
+                # If an artist field is found, search his album
+                if data['type'] == "artist":
+
+                    print(data['name'], data['type'])
+                    searchRequest(name=data['name'], artist=data['name'], conn="album")
+
+                # If an album field is found, search his tracks
+                if data['type'] == "album" and\
+                  (data['artist']['name'] == artist or artist == ""):
+
+                    print(data['title'], data['type'])
+                    searchRequest(name=data['title'], conn="track", artist=artist, album=data['title'])
+
+                if data['type'] == "track" and\
+                  (data['artist']['name'] == artist or artist == "") and\
+                  (data['album']['title'] == album  or album  == ""):
+
+                  print(data['title'], data['type'])
+
+    # Just for example
+    searchRequest(name="Mastodon", conn="artist")
+
+    # Get the API: https://developers.deezer.com/
+
     return render(request, 'musicapp/search.html', context=context_dict)
 
 
@@ -105,5 +149,3 @@ def song(request, artist_name, album_name, song_title):
     context_dict = dict()
     context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
     return render(request, 'musicapp/song.html', context=context_dict)
-
-

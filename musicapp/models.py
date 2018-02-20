@@ -11,7 +11,7 @@ class User(models.Model):
 
 class Genre(models.Model):
     Name = models.CharField(max_length=128,unique=True)
-    
+
     def __str__(self):
         return "%s the genre" % self.name
 
@@ -87,4 +87,3 @@ class PlayList(models.Model):
 
     def __str__(self):
         return "Play List Name %s " % PlayListName
-
