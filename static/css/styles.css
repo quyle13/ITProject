@@ -674,3 +674,9 @@ div.card:after {
     clear: both;
 }
 
+.form-error {
+    color: red;
+    width: 100%;
+    text-align: center;
+    display: block;
+}

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm
+from musicapp.forms import UserForm, UserEditForm
 
 import requests
+
 
 def index(request):
     context_dict = dict()
@@ -66,15 +68,34 @@ def login(request):
             context_dict['error_msg'] = "Username and password does not match "
     return render(request, 'musicapp/login.html', context=context_dict)
 
+
 @login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
 
 
-def profile(request, profile_id):
+@login_required
+def profile(request):
     context_dict = dict()
     context_dict['page_title'] = 'My Profile'
+    context_dict['user'] = request.user
+    context_dict['playlists'] = None
+    context_dict['playlist_songs'] = None
+
+    if request.method == 'POST':
+        user_edit_form = UserEditForm(user=request.user, data=request.POST)
+        context_dict['user_edit_form'] = user_edit_form
+        if user_edit_form.is_valid():
+            if user_edit_form.cleaned_data.get('password') != '':
+                u = User.objects.get(username__exact=request.user.username)
+                u.set_password(user_edit_form.cleaned_data.get('password'))
+                u.save()
+        else:
+            print(user_edit_form.errors)
+
+    else:
+        user_edit_form = UserEditForm(user=request.user)
     return render(request, 'musicapp/profile.html', context=context_dict)
 
 
@@ -96,7 +117,7 @@ def search(request):
             searchRequest(name, conn="track")
 
         # Send request to search information
-        result = requests.get("https://api.deezer.com/search/" + conn + "?", params={'q':name})
+        result = requests.get("https://api.deezer.com/search/" + conn + "?", params={'q': name})
 
         # Check if the HTTP response is OK
         if result.status_code == 200:
@@ -108,22 +129,19 @@ def search(request):
 
                 # If an artist field is found, search his album
                 if data['type'] == "artist":
-
                     print(data['name'], data['type'])
                     searchRequest(name=data['name'], artist=data['name'], conn="album")
 
                 # If an album field is found, search his tracks
-                if data['type'] == "album" and\
-                  (data['artist']['name'] == artist or artist == ""):
-
+                if data['type'] == "album" and \
+                        (data['artist']['name'] == artist or artist == ""):
                     print(data['title'], data['type'])
                     searchRequest(name=data['title'], conn="track", artist=artist, album=data['title'])
 
-                if data['type'] == "track" and\
-                  (data['artist']['name'] == artist or artist == "") and\
-                  (data['album']['title'] == album  or album  == ""):
-
-                  print(data['title'], data['type'])
+                if data['type'] == "track" and \
+                        (data['artist']['name'] == artist or artist == "") and \
+                        (data['album']['title'] == album or album == ""):
+                    print(data['title'], data['type'])
 
     # Just for example
     searchRequest(name="Mastodon", conn="artist")

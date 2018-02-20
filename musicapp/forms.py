@@ -23,3 +23,28 @@ class UserForm(forms.ModelForm):
         if email_count:
             raise forms.ValidationError('Email already exists')
         return email
+
+
+class UserEditForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(), required=False)
+    confirm_password = forms.CharField(widget=forms.PasswordInput(), required=False)
+
+    class Meta:
+        model = User
+        fields = ('password', 'confirm_password')
+
+    def __init__(self, user, data=None):
+        self.user = user
+        super(UserEditForm, self).__init__(data=data)
+
+    def clean_current_password(self):
+        password = self.cleaned_data.get('current_password', None)
+        if not self.user.check_password(password):
+            raise forms.ValidationError("Password is incorrect")
+
+    def clean(self):
+        cleaned_data = super(UserEditForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+        if password != confirm_password:
+            raise forms.ValidationError("Passwords do not match")
