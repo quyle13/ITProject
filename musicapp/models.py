@@ -1,16 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 
-class User(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.EmailField()
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
 
 
 class Genre(models.Model):
-    Name = models.CharField(max_length=128,unique=True)
+    Name = models.CharField(max_length=128, unique=True)
 
     def __str__(self):
         return "%s the genre" % self.name
@@ -34,7 +34,7 @@ class Song(models.Model):
     Artist = models.ForeignKey(Artist)
     URL = models.URLField()
     ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre,on_delete = models.CASCADE,
+    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE,
                                  primary_key=True)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(default="")
@@ -70,7 +70,7 @@ class Album(models.Model):
     URL = models.URLField()
     UploadDate = models.DateField()
     ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre,on_delete=models.CASCADE)
+    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(None)
     Song = models.ForeignKey(Song)

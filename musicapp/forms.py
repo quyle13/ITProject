@@ -26,12 +26,14 @@ class UserForm(forms.ModelForm):
 
 
 class UserEditForm(forms.ModelForm):
+    current_password = forms.CharField(widget=forms.PasswordInput(), required=False)
     password = forms.CharField(widget=forms.PasswordInput(), required=False)
     confirm_password = forms.CharField(widget=forms.PasswordInput(), required=False)
+    profile_picture = forms.ImageField(required=False)
 
     class Meta:
         model = User
-        fields = ('password', 'confirm_password')
+        fields = ('password', 'confirm_password', 'profile_picture')
 
     def __init__(self, user, data=None):
         self.user = user

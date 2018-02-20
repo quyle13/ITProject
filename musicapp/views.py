@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
-from django.contrib.auth.models import User
+from musicapp.models import UserProfile
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from musicapp.forms import UserForm, UserEditForm
+from django.core.files.storage import FileSystemStorage
 
 import requests
 
@@ -84,13 +85,30 @@ def profile(request):
     context_dict['playlist_songs'] = None
 
     if request.method == 'POST':
+        request.user.userprofile.profile_picture
         user_edit_form = UserEditForm(user=request.user, data=request.POST)
         context_dict['user_edit_form'] = user_edit_form
         if user_edit_form.is_valid():
             if user_edit_form.cleaned_data.get('password') != '':
-                u = User.objects.get(username__exact=request.user.username)
+                u = UserProfile.objects.get(username__exact=request.user.username)
                 u.set_password(user_edit_form.cleaned_data.get('password'))
                 u.save()
+            if request.FILES.get('profile_picture'):
+                profile_picture = request.FILES.get('profile_picture')
+                fs = FileSystemStorage()
+                filename = profile_picture.name
+                file, ext = filename.split('.')
+                file = request.user.username
+                filename = file + '.' + ext
+                filename = fs.save(filename, profile_picture)
+                uploaded_file_url = fs.url(filename)
+                try:
+                    u = UserProfile.objects.get(user_id=request.user.id)
+                    u.profile_picture = uploaded_file_url
+                    u.save()
+                except UserProfile.DoesNotExist:
+                    u = UserProfile(user_id=request.user.id, profile_picture=uploaded_file_url)
+                    u.save()
         else:
             print(user_edit_form.errors)
 
