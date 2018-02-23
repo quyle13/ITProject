@@ -1,31 +1,27 @@
 {% extends 'musicapp/base.html' %}
 
 {% block content %}
-    <form class="search-form">
+    <form class="search-form" id="search-form" method="post" action="{% url 'search' %}">
+         {% csrf_token %}
         <div class="input-group">
             <div class="input-group-addon"><span><i class="glyphicon glyphicon-search"></i></span></div>
-            <input class="form-control" type="text" placeholder="I am looking for..">
+            <input class="form-control" value="{{ keyword }}" type="text" placeholder="I am looking for.." name="searchValue"/>
             <div class="input-group-btn">
-                <button class="btn btn-default" type="button">Search</button>
+                <button class="btn btn-default" type="submit">Search</button>
             </div>
         </div>
     </form>
     <div id="search-results">
-        {% include 'musicapp/components/display_item.html' with type='song' %}
-        {% include 'musicapp/components/display_item.html' with type='album' %}
-        {% include 'musicapp/components/display_item.html' with type='song' %}
-        {% include 'musicapp/components/display_item.html' with type='artist' %}
+
+        {% include 'musicapp/components/display_item.html' with result=returned_list paging=paging_result %}
+
     </div>
-    <div class="clearfix"></div>
-    <nav class="center">
-        <ul class="pagination">
-            <li><a aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-            <li class="active"><a>1</a></li>
-            <li><a>2</a></li>
-            <li><a>3</a></li>
-            <li><a>4</a></li>
-            <li><a>5</a></li>
-            <li><a aria-label="Next"><span aria-hidden="true">»</span></a></li>
-        </ul>
-    </nav>
+
+    <div>
+    </div>
+
+
+
+
+
 {% endblock %}

@@ -1,11 +1,50 @@
-<div class="card selectable">
-    <a href="#">
-        <img class="img-responsive">
-    </a>
-    {% if type == 'song' %} <p>Song</p> <p>Album / Artist</p> {% endif %}
-    {% if type == 'album' %} <p>Album</p> <p>Artist</p> {% endif %}
-    {% if type == 'artist' %} <p>Artist Name</p> {% endif %}
-    {% if type == 'playlist' %} <p>Playlist Name</p> {% endif %}
-    <span class="text-capitalize {{ type }}">{{ type }}</span>
+{% if returned_list %}
+    {% for result in returned_list %}
+        <div class="card selectable">
+        {% if result.type == 'track' %}
+                <a href="{{ result.URL }}">
+                    <img class="img-responsive" src="{{ result.PictureURL }}"/>
+                </a>
+            <p>     {{ result.title }}</p>
+
+
+        {% elif result.type == 'artist' %}
+            <div class="card selectable">
+                <a href="#">
+                    <img class="img-responsive" src="{{ result.PictureURL }}"/>
+                </a>
+                <p>{{ result.name }}</p>
+            </div>
+        {% else %}
+            <div class="card selectable">
+
+            <a href="#">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.NumberOfTracks }}</p>
+
+        {% endif %}
+    <span class="text-capitalize {{ result.type }}">{{ result.type }}</span>
     <div class="clearfix"></div>
-</div>
+    </div>
+    {% endfor %}
+  {% else %}
+<p style="color: red;text-align: center"> There are no records found. Please try with different criteria !</p>
+{% endif %}
+
+
+{#    <div class="clearfix"></div>#}
+{#    {% if paging_result %}#}
+{##}
+{#    <nav class="center">#}
+{#        <ul class="pagination">#}
+{#            {% if paging_result.previous %}#}
+{#            <li><a href="{{ paging_result.URL}}">{{ paging_result.previous}}</a></li>#}
+{#            {% endif %}#}
+{#            {% if paging_result.next %}#}
+{#            <li><a href="{{ paging_result.URL}}"><s{{ paging_result.next}}</a></li>#}
+{#            {% endif %}#}
+{#        </ul>#}
+{#    </nav>#}
+
+{#    {% endif %}#}

@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from musicapp.forms import UserForm
+from musicapp.models import Artist, Album, Song
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
 
 import requests
 
@@ -83,54 +86,131 @@ def playlist(request, playlist_name):
     context_dict['page_title'] = 'My Playlist'
     return render(request, 'musicapp/playlist.html', context=context_dict)
 
+'''
+Process search songs/albums/artist
+1. User enters a keyword for searching
+2. Search in local database firstly
+3. If there is no information, then call Deezer API
+'''
+def run_Query(name=""):
+    returned_result = []
+    paging_result = []
+    total_pages = 0
+    total_item = 0
+    #Firstly, check our database
+    artist_list = Artist.objects.filter(Name__icontains=name)
+    if artist_list.exists():
+        print ('Artist - There is information in DB')
+        for each_artist in artist_list:
+            total_item = total_item +1
+            returned_result.append({'name': each_artist.Name,'PictureURL': each_artist.PictureURL,'type':'artist'})
+    # If we don't find any thing in our database, then send request to search information
 
-def search(request):
-    context_dict = dict()
-    context_dict['page_title'] = 'Search for Songs, Albums, Artists'
+    tracks = Song.objects.filter(Title__icontains=name)
+    if tracks.exists():
+        print ('Track - There is information in DB')
+        for each_track in tracks:
+            total_item = total_item + 1
+            returned_result.append({'title': each_track.Title, 'Link': each_track.URL,'type':'track','PictureURL':each_track.PictureURL})
 
-    def searchRequest(name="", conn="", artist="", album=""):
-
-        if conn == "":
-            searchRequest(name, conn="artist")
-            searchRequest(name, conn="album")
-            searchRequest(name, conn="track")
-
-        # Send request to search information
-        result = requests.get("https://api.deezer.com/search/" + conn + "?", params={'q':name})
+    album_list = Album.objects.filter(Title__icontains=name)
+    if album_list.exists():
+        print ('Album - There is information in DB')
+        for each_album in album_list:
+            total_item = total_item + 1
+            returned_result.append({'title': each_album.Title, 'PictureURL': each_album.PictureURL,
+                                    'NumberOfTracks': each_album.NumberOfTracks,'type':'album'})
+    # not have information in database
+    if not returned_result:
+        result = requests.get("https://api.deezer.com/search"  + "?", params={'q':name})
 
         # Check if the HTTP response is OK
         if result.status_code == 200:
-            result = result.json()
+            temp_result = result.json()
+            number_of_items =0
+            total_item = temp_result['total']
+            for key, value in temp_result.items():
+                if key == 'data':
+                    number_of_items = len(value)
+            print ("Number of items:", number_of_items)
 
-            # Browse the different element in the JSON answer
-            for i in range(result['total']):
-                data = result['data'][i]
+            #iterate all objects and save to data
+            for i in range(number_of_items):
+                each_object = temp_result['data'][i]
+                print (each_object['type'])
+                if each_object['type'] == 'artist':
+                    artist = Artist()
+                    artist.Name = each_object['name']
+                    artist.PictureURL = each_object['picture_medium']
+                    artist.NumberAlbum = each_object['nb_album']
+                    artist.ArtistDeezerID = each_object['id']
+                    artist.save()
 
-                # If an artist field is found, search his album
-                if data['type'] == "artist":
+                # #processing for Songs/Albums
+                elif each_object['type'] == 'album':
+                    album = Album()
+                    album.Title = each_object['title']
+                    album.PictureURL = each_object['cover_medium']
+                    album.NumberOfTracks = each_object['nb_tracks']
+                    album.URL = each_object['link']
+                    album.AlbumDeezerID = each_object['id']
+                    album.ArtistDeezerID = each_object['artist']['id']
+                    album.save()
+                else:
+                    song = Song()
+                    song.Title = each_object['title_short']
+                    song.URL = each_object['link']
+                    song.PictureURL = each_object['album']['cover_medium']
+                    song.AlbumDeezerID = each_object['album']['id']
+                    song.ArtistDeezerID = each_object['artist']['id']
+                    song.SongDeezerID = each_object['id']
+                    song.save()
 
-                    print(data['name'], data['type'])
-                    searchRequest(name=data['name'], artist=data['name'], conn="album")
+            for each_item in temp_result['data']:
+                if each_item['type'] == 'artist':
+                    returned_result.append({'name': each_artist['name'],
+                               'PictureURL':each_artist['picture_medium'],'type':'artist'})
+                elif each_item['type'] == 'track':
+                    returned_result.append({'title': each_item['title_short'],
+                                            'URL': each_item['link'],'type':'track','PictureURL': each_item['album']['cover_medium']})
+                else:
+                    returned_result.append({'title': each_item['title'],
+                                            'PictureURL': each_item['PictureURL'], 'NumberOfTracks': each_item['NumberOfTracks']
+                                            ,'type':'album'
+                                            })
 
-                # If an album field is found, search his tracks
-                if data['type'] == "album" and\
-                  (data['artist']['name'] == artist or artist == ""):
 
-                    print(data['title'], data['type'])
-                    searchRequest(name=data['title'], conn="track", artist=artist, album=data['title'])
 
-                if data['type'] == "track" and\
-                  (data['artist']['name'] == artist or artist == "") and\
-                  (data['album']['title'] == album  or album  == ""):
+            # if "prev" in temp_result.keys():
+            #     paging_result.append({'previous':'<<','URL':temp_result['prev']})
+            # if "next" in temp_result.keys():
+            #     paging_result.append({'next':'>>','URL':temp_result['next']})
+    return {'returned_result':returned_result}
 
-                  print(data['title'], data['type'])
-
-    # Just for example
-    searchRequest(name="Mastodon", conn="artist")
-
-    # Get the API: https://developers.deezer.com/
-
+'''
+This method is called when user browses to Search page.
+If Get method: return HTML page
+If POST method: call run_Query method to process
+'''
+def search(request):
+    context_dict = dict()
+    context_dict['page_title'] = 'Search for Songs, Albums, Artists'
+    # Browse the different element in the JSON answer
+    if request.method == 'POST':
+        keyword = request.POST.get('searchValue')
+        #by default search for track
+        try:
+            returned_list = run_Query(name=keyword)
+            #show the search value when user submits the form
+            context_dict["keyword"] = keyword
+            print (returned_list)
+            context_dict["returned_list"] = returned_list['returned_result']
+            # context_dict["paging_result"] = returned_list['paging_result']
+        except:
+            print("Error when querying the Deezer API")
     return render(request, 'musicapp/search.html', context=context_dict)
+
+
 
 
 def artist(request, artist_name):
