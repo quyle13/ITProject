@@ -32,8 +32,15 @@
                 <span class="icon-bar"></span>
             </button>
         </div>
+
+        <!-- <button class="btn btn-default control" id="header-player" type="button" src="https://e-cdns-preview-1.dzcdn.net/stream/17cb0814dd83646cd91d7fe53392f333-10.mp3">
+            <i class="fa fa-play-circle-o" title="Play song"></i>
+        </button> -->
+
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
+                <li role="presentation" class="btn btn-default control" id="header-player">
+                    <i class="fa fa-play-circle-o" title="Play song"></i></li>
                 <li role="presentation" {% if search_active %} class="active" {% endif %}><a
                         href="{% url 'search' %}">Search</a></li>
                 <li role="presentation" {% if about_active %} class="active" {% endif %}><a
