@@ -680,3 +680,31 @@ div.card:after {
     text-align: center;
     display: block;
 }
+
+.notification {
+    position: absolute;
+    text-align: center;
+    top: 75px;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    color: #FFFFFF;
+    z-index: 999;
+}
+
+.notification h4{
+    color: #FFFFFF;
+}
+
+.notification.error {
+    background: #9e0000;
+}
+.notification.warning {
+    background: #ffff00;
+}
+.notification.warning h4{
+    color: #000000;
+}
+.notification.success{
+    background: #0a9e00;
+}

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
 from musicapp.models import UserProfile
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -85,14 +86,15 @@ def profile(request):
     context_dict['playlist_songs'] = None
 
     if request.method == 'POST':
-        request.user.userprofile.profile_picture
         user_edit_form = UserEditForm(user=request.user, data=request.POST)
         context_dict['user_edit_form'] = user_edit_form
         if user_edit_form.is_valid():
             if user_edit_form.cleaned_data.get('password') != '':
-                u = UserProfile.objects.get(username__exact=request.user.username)
+                u = User.objects.get(username__exact=request.user.username)
                 u.set_password(user_edit_form.cleaned_data.get('password'))
                 u.save()
+                context_dict['notification_success'] = True
+                context_dict['notification_message'] = 'Password Successfully Changed'
             if request.FILES.get('profile_picture'):
                 profile_picture = request.FILES.get('profile_picture')
                 fs = FileSystemStorage()
@@ -109,6 +111,11 @@ def profile(request):
                 except UserProfile.DoesNotExist:
                     u = UserProfile(user_id=request.user.id, profile_picture=uploaded_file_url)
                     u.save()
+                context_dict['notification_success'] = True
+                context_dict['notification_message'] = 'Profile Picture Updated'
+            if user_edit_form.cleaned_data.get('password') == '' and request.FILES.get('profile_picture') is None:
+                context_dict['notification_warning'] = True
+                context_dict['notification_message'] = 'No change made to your profile'
         else:
             print(user_edit_form.errors)
 
