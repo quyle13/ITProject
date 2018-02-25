@@ -2,27 +2,48 @@
 {% load static %}
 
 {% block content %}
+    {% if user_edit_form.errors %}
+        <div class="notification error">
+            <h4>There has been an error</h4>
+            {% for field in user_edit_form %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if notification_success %}
+        <div class="notification success">
+            <h4>Your profile has been updated</h4>
+            <p>{{ notification_message }}</p>
+        </div>
+    {% endif %}
+    {% if notification_warning %}
+        <div class="notification warning">
+            <h4>{{ notification_message }}</h4>
+        </div>
+    {% endif %}
     {% include 'musicapp/components/edit_profile_modal.html' %}
     <div class="relative">
-        <h2>Full Name</h2>
+        <h2>@{{ user.username }}</h2>
         <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#edit-modal">
             edit profile
         </button>
         <hr>
     </div>
     <div class="relative">
-        <img src="{% static 'img/andrew.jpg' %}" class="profile-photo">
+        <img src="{{ user.userprofile.profile_picture }}" class="profile-photo">
         <h4>Details:</h4>
         <div class="row">
             <div class="col-xs-2">
-                <p>Email:&nbsp;</p>
                 <p>Location:</p>
-                <p>Registered Since:&nbsp;</p>
+                <p>Last Login:</p>
+                <p>Registered Since:</p>
             </div>
             <div class="col-xs-10">
                 <p>Paragraph</p>
-                <p>Paragraph</p>
-                <p>Paragraph</p>
+                <p>{{ user.last_login }}</p>
+                <p>{{ user.date_joined }}</p>
             </div>
         </div>
         <div class="clearfix"></div>

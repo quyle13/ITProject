@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from musicapp import views
+from music_project import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^$', views.index, name='home'),
@@ -29,7 +31,10 @@ urlpatterns = [
     url(r'^view/album/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/$', views.album, name='album'),
     url(r'^view/song/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/(?P<song_title>[\w\-]+)/$',
         views.song, name='song'),
-    url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
+    url(r'^profile/$', views.profile, name='profile'),
     url(r'^playlist/(?P<playlist_name>[\w\-]+)/$', views.playlist, name='playlist'),
     url(r'^admin/', admin.site.urls, name='admin'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

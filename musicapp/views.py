@@ -1,14 +1,19 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
+from musicapp.models import UserProfile
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from musicapp.forms import UserForm, UserEditForm
+from django.core.files.storage import FileSystemStorage
 from musicapp.forms import UserForm
 from musicapp.models import Artist, Album, Song
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import requests
+
 
 def index(request):
     context_dict = dict()
@@ -69,15 +74,57 @@ def login(request):
             context_dict['error_msg'] = "Username and password does not match "
     return render(request, 'musicapp/login.html', context=context_dict)
 
+
 @login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
 
 
-def profile(request, profile_id):
+@login_required
+def profile(request):
     context_dict = dict()
     context_dict['page_title'] = 'My Profile'
+    context_dict['user'] = request.user
+    context_dict['playlists'] = None
+    context_dict['playlist_songs'] = None
+
+    if request.method == 'POST':
+        user_edit_form = UserEditForm(user=request.user, data=request.POST)
+        context_dict['user_edit_form'] = user_edit_form
+        if user_edit_form.is_valid():
+            if user_edit_form.cleaned_data.get('password') != '':
+                u = User.objects.get(username__exact=request.user.username)
+                u.set_password(user_edit_form.cleaned_data.get('password'))
+                u.save()
+                context_dict['notification_success'] = True
+                context_dict['notification_message'] = 'Password Successfully Changed'
+            if request.FILES.get('profile_picture'):
+                profile_picture = request.FILES.get('profile_picture')
+                fs = FileSystemStorage()
+                filename = profile_picture.name
+                file, ext = filename.split('.')
+                file = request.user.username
+                filename = file + '.' + ext
+                filename = fs.save(filename, profile_picture)
+                uploaded_file_url = fs.url(filename)
+                try:
+                    u = UserProfile.objects.get(user_id=request.user.id)
+                    u.profile_picture = uploaded_file_url
+                    u.save()
+                except UserProfile.DoesNotExist:
+                    u = UserProfile(user_id=request.user.id, profile_picture=uploaded_file_url)
+                    u.save()
+                context_dict['notification_success'] = True
+                context_dict['notification_message'] = 'Profile Picture Updated'
+            if user_edit_form.cleaned_data.get('password') == '' and request.FILES.get('profile_picture') is None:
+                context_dict['notification_warning'] = True
+                context_dict['notification_message'] = 'No change made to your profile'
+        else:
+            print(user_edit_form.errors)
+
+    else:
+        user_edit_form = UserEditForm(user=request.user)
     return render(request, 'musicapp/profile.html', context=context_dict)
 
 
@@ -238,9 +285,6 @@ def search(request):
             context_dict["returned_list"] = paginator.page(paginator.num_pages)
 
     return render(request, 'musicapp/search.html', context=context_dict)
-
-
-
 
 
 def artist(request, artist_name):
