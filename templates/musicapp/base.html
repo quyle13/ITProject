@@ -15,9 +15,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{% static 'js/notifications.js' %}"></script>
-{#    <script type="text/javascript" src="{% static 'js/player.js' %}"></script>#}
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="{% static 'js/player.js' %}"></script>
 
 </head>
 
@@ -33,8 +35,11 @@
                 <span class="icon-bar"></span>
             </button>
         </div>
+
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
+                <li role="presentation" class="btn btn-default control" id="header-player">
+                    <i class="fa fa-play-circle-o" title="Play song"></i></li>
                 <li role="presentation" {% if search_active %} class="active" {% endif %}><a
                         href="{% url 'search' %}">Search</a></li>
                 <li role="presentation" {% if about_active %} class="active" {% endif %}><a
