@@ -1,8 +1,6 @@
 from django.db import models
 
 # Create your models here.
-
-
 class User(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
@@ -21,23 +19,30 @@ class Artist(models.Model):
     Featuring = models.CharField(max_length=400)
     isBand = models.BooleanField(default=False)
     Member = models.CharField(max_length=4000)
-    Rating = models.FloatField()
+    Rating = models.FloatField(default=0)
     Comment = models.TextField(None)
     PersonalWebsite = models.CharField(max_length=400)
-
+    PictureURL = models.URLField(default="")
+    NumberAlbum = models.IntegerField(default=0)
+    #ID from Deezer
+    ArtistDeezerID = models.IntegerField(default=0)
     def __str__(self):
-        return "Artist Name %s " % Name
+        return "Artist Name %s " % self.Name
 
 
 class Song(models.Model):
     Title = models.CharField(max_length=200)
-    Artist = models.ForeignKey(Artist)
+    ArtistName = models.CharField(max_length=400,default="")
     URL = models.URLField()
-    ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre,on_delete = models.CASCADE,
-                                 primary_key=True)
+    # ReleasedDate = models.DateField(default=None)
+    # Genre = models.OneToOneField(Genre,on_delete = models.CASCADE,
+    #                              primary_key=True)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(default="")
+    PictureURL = models.URLField(default="")
+    ArtistDeezerID =  models.IntegerField(default=0)
+    SongDeezerID = models.IntegerField(default=0)
+    AlbumDeezerID = models.IntegerField(default=0)
 
     def __str__(self):
         return "%s is the song" % self.Title
@@ -74,6 +79,11 @@ class Album(models.Model):
     Rating = models.FloatField(default=0)
     Comment = models.TextField(None)
     Song = models.ForeignKey(Song)
+    PictureURL = models.URLField(default="")
+    NumberOfTracks = models.IntegerField(default=1)
+
+    ArtistDeezerID = models.IntegerField(default=0)
+    AlbumDeezerID = models.IntegerField(default=0)
 
     def __str__(self):
         return "Album Name %s " % Title
