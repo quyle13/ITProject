@@ -1,7 +1,7 @@
 {% extends 'musicapp/base.html' %}
 
 {% block content %}
-    <form class="search-form" id="search-form" method="post" action="{% url 'search' %}">
+    <form class="search-form" id="search-form" method="get"  action="{% url 'search' %}">
          {% csrf_token %}
         <div class="input-group">
             <div class="input-group-addon"><span><i class="glyphicon glyphicon-search"></i></span></div>
@@ -19,6 +19,7 @@
 
     <div>
     </div>
+
 
 
 
