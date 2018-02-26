@@ -17,7 +17,8 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from musicapp import views
 from musicapp.views import *
-
+from music_project import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^$', views.index, name='home'),
@@ -31,10 +32,13 @@ urlpatterns = [
     url(r'^view/album/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/$', views.album, name='album'),
     url(r'^view/song/(?P<artist_name>[\w\-]+)/(?P<album_name>[\w\-]+)/(?P<song_title>[\w\-]+)/$',
         views.song, name='song'),
-    url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
+    url(r'^profile/$', views.profile, name='profile'),
     url(r'^playlist/(?P<playlist_name>[\w\-]+)/$', views.playlist, name='playlist'),
     url(r'^admin/', admin.site.urls, name='admin'),
     url(r'^components/new_comment/$', views.comment_post, name='comment_post'),
     url(r'^components/rate_modal/$', views.rating_post, name='rating_post'),
     # url(r'^test/$', views.test, name='test')
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,28 +1,45 @@
 <div class="modal fade" role="dialog" tabindex="-1" id="edit-modal">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title">Edit your profile</h4>
-            </div>
-            <div class="modal-body">
-                <form method="post">
+        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Edit your profile @{{ user.username }}</h4>
+                </div>
+                <div class="modal-body">
+
+                    {% if user_edit_form.errors %}
+                        {% for field in user_edit_form %}
+                            {% for error in field.errors %}
+                                <div class="form-group">
+                                    <span class="form-error">
+                                        {{ error }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in user_edit_form.non_field_errors %}
+                            <div class="form-group">
+                                <span class="form-error">
+                                    {{ error|escape }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     <div class="form-group">
-                        <input class="form-control" type="email" name="email"
-                               placeholder="Change Email" autofocus="">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="email" name="confirm_email"
-                               placeholder="Confirm Emaild Change" autofocus="">
+                        <input class="form-control" type="password" name="current_password"
+                               placeholder="Current Password">
                     </div>
                     <div class="form-group">
                         <input class="form-control" type="password" name="password"
-                               placeholder="Change Passsword">
+                               placeholder="Change Password">
                     </div>
                     <div class="form-group">
                         <input class="form-control" type="password" name="confirm_password"
-                               placeholder="Confirm Passsword Change">
+                               placeholder="Confirm Password Change">
                     </div>
                     <div class="form-group">
                         <label class="control-label">Upload Profile Photo</label>
@@ -31,12 +48,13 @@
                                 accept="image/*"
                                 name="profile_picture">
                     </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
-                <button class="btn btn-primary" type="submit">Save</button>
-            </div>
-        </div>
+
+        </form>
     </div>
 </div>

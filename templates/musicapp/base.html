@@ -11,7 +11,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-    <link rel="stylesheet" href="{% static 'css/styles.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="{% static 'js/player.js' %}"></script>
+
 </head>
 
 <body>
@@ -26,8 +35,11 @@
                 <span class="icon-bar"></span>
             </button>
         </div>
+
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav navbar-right">
+                <li role="presentation" class="btn btn-default control" id="header-player">
+                    <i class="fa fa-play-circle-o" title="Play song"></i></li>
                 <li role="presentation" {% if search_active %} class="active" {% endif %}><a
                         href="{% url 'search' %}">Search</a></li>
                 <li role="presentation" {% if about_active %} class="active" {% endif %}><a
@@ -39,10 +51,10 @@
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">@{{ user.username }}
                             <span class="caret"></span>
-                            <img src="{% static 'img/favicon.ico' %}">
+                            <img src="{{ user.userprofile.profile_picture }}">
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li role="presentation"><a href="{% url 'profile' user.id %}">Profile </a></li>
+                            <li role="presentation"><a href="{% url 'profile' %}">Profile </a></li>
                             <li role="presentation"><a href="{% url 'logout' %}">Logout </a></li>
                         </ul>
                     </li>
@@ -96,8 +108,6 @@
         </div>
     </footer>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 
 </html>
