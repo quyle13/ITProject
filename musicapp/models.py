@@ -1,4 +1,6 @@
 from django.db import models
+
+from django import forms
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -8,9 +10,9 @@ class UserProfile(models.Model):
 
 class Genre(models.Model):
     Name = models.CharField(max_length=128, unique=True)
-
+    
     def __str__(self):
-        return "%s the genre" % self.name
+        return "%s the genre" % self.Name
 
 
 class Artist(models.Model):
@@ -33,9 +35,10 @@ class Song(models.Model):
     Title = models.CharField(max_length=200)
     ArtistName = models.CharField(max_length=400,default="")
     URL = models.URLField()
-    # ReleasedDate = models.DateField(default=None)
-    # Genre = models.OneToOneField(Genre,on_delete = models.CASCADE,
-    #                              primary_key=True)
+
+    ReleasedDate = models.DateField()
+    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE,
+                                 primary_key=True)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(default="")
     PictureURL = models.URLField(default="")
@@ -48,27 +51,31 @@ class Song(models.Model):
 
 
 class Comment(models.Model):
-    Content = models.CharField(max_length=40000)
-    RatingType = models.CharField(max_length=128)
-    ItemID = models.IntegerField()
-    RatingDate = models.DateField()
+    Username = models.CharField(max_length=50)
+    Content = models.TextField(max_length=1000)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    Comment_page = models.CharField(max_length=400)
 
     def __str__(self):
         return "%s is content of comment" % self.Content
 
 
 class Rating(models.Model):
-    ItemID = models.IntegerField()
-    RatingType = models.CharField(max_length=128)
-    UserID = models.IntegerField()
-    RatingDate = models.DateField()
-    RatingValue = models.FloatField(default=0)
+    Username = models.CharField(max_length=50)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    RatingValue = models.IntegerField()
+    Rating_page = models.CharField(max_length=400)
 
     def __str__(self):
-        return "Rating Type %s , Rating Value %s" % self.RatingType % self.RatingValue
+        return "Rating Value %s" % self.RatingValue
 
 
 class Album(models.Model):
+    ItemID = models.IntegerField(unique=True, default=0)
     Title = models.CharField(max_length=400)
     Artist = models.OneToOneField(Artist, models.CASCADE)
     URL = models.URLField()
@@ -85,7 +92,7 @@ class Album(models.Model):
     AlbumDeezerID = models.IntegerField(default=0)
 
     def __str__(self):
-        return "Album Name %s " % Title
+        return "Album Name %s " % self.Title
 
 
 class PlayList(models.Model):
@@ -95,4 +102,5 @@ class PlayList(models.Model):
     CreatedDate = models.DateField()
 
     def __str__(self):
-        return "Play List Name %s " % PlayListName
+        return "Play List Name %s " % self.PlayListName
+
