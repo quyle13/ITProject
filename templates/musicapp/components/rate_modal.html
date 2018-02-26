@@ -7,34 +7,36 @@
                 </button>
                 <h4 class="modal-title">Rate {{ type }}</h4>
             </div>
-            <div class="modal-body">
-                <form method="post">
-                    <div class="form-group">
-                        <label class="control-label">Rating 0-5</label>
-                        <select class="form-control"
-                                name="rating"
-                                required=""
-                                autofocus="">
-                            <option value="0" selected="">Zero Star</option>
-                            <option value="1">One Star</option>
-                            <option value="2">Two Start</option>
-                            <option value="3">Three Star</option>
-                            <option value="4">Four Star</option>
-                            <option value="5">Five Star</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Rating Text</label>
-                        <textarea
-                                class="form-control" wrap="hard" spellcheck="true" name="rating_text" required=""
-                                placeholder="Enter a description of your rating"></textarea>
-                    </div>
-                </form>
-            </div>
+
+                    <form action="{% url 'rating_post' %}" method="post">
+                        {% csrf_token %}
+                        {{ rating_form.author }}
+                        {{ rating_form.artist }}
+                        {{ rating_form.album }}
+                        {{ rating_form.song }}
+                        {{ rating_form.author }}
+                        {{ rating_form.rating_page }}
+                        <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label">Rating 0-5</label>
+                            <select class="form-control"
+                                    name="value"
+                                    required=""
+                                    autofocus="">
+                                <option value="0" selected="">Zero Star</option>
+                                <option value="1">One Star</option>
+                                <option value="2">Two Start</option>
+                                <option value="3">Three Star</option>
+                                <option value="4">Four Star</option>
+                                <option value="5">Five Star</option>
+                            </select>
+                        </div>
+                </div>
             <div class="modal-footer">
                 <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
                 <button class="btn btn-primary" type="submit">Save</button>
             </div>
+                    </form>
         </div>
     </div>
 </div>

@@ -49,23 +49,22 @@ class Comment(models.Model):
     Artist = models.CharField(max_length=400)
     Album = models.CharField(max_length=400)
     Song = models.CharField(max_length=200)
-    # RatingType = models.CharField(max_length=128)
-    # ItemID = models.IntegerField()
-    # RatingDate = models.DateField()
+    Comment_page = models.CharField(max_length=400)
 
     def __str__(self):
         return "%s is content of comment" % self.Content
 
 
 class Rating(models.Model):
-    ItemID = models.IntegerField()
-    RatingType = models.CharField(max_length=128)
-    UserID = models.IntegerField()
-    RatingDate = models.DateField()
-    RatingValue = models.FloatField(default=0)
+    Username = models.CharField(max_length=50)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    RatingValue = models.IntegerField()
+    Rating_page = models.CharField(max_length=400)
 
     def __str__(self):
-        return "Rating Type %s , Rating Value %s" % self.RatingType % self.RatingValue
+        return "Rating Value %s" % self.RatingValue
 
 
 class Album(models.Model):

@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm, CommentForm
+from musicapp.forms import UserForm, CommentForm, RatingForm
 from .models import *
+from django.db.models import Avg
 
 
 def index(request):
@@ -90,27 +91,31 @@ def search(request):
     return render(request, 'musicapp/search.html', context=context_dict)
 
 
-# def artist(request, artist_name):
-#     context_dict = dict()
-#     context_dict['page_title'] = artist_name
-#     return render(request, 'musicapp/artist.html', context=context_dict)
-#
-#
-# def album(request, artist_name, album_name):
-#     context_dict = dict()
-#     context_dict['page_title'] = album_name + ' by: ' + artist_name
-#     return render(request, 'musicapp/album.html', context=context_dict)
-
-
 def song(request, artist_name, album_name, song_title):
-    # context_dict = dict()
-    # context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
+
     comment_form = CommentForm({'author': request.user.username,
                                 'artist': artist_name,
                                 'album': album_name,
-                                'song': song_title})
+                                'song': song_title,
+                                'comment_page': 'song'})
+
+    rating_form = RatingForm({'author': request.user.username,
+                              'artist': artist_name,
+                              'album': album_name,
+                              'song': song_title,
+                              'rating_page': 'song'})
     try:
-        comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song=song_title).order_by('id')
+        rates = Rating.objects.filter(Artist=artist_name,
+                                      Album=album_name,
+                                      Song=song_title).order_by('-id')[:10]
+        avg_rates = rates.aggregate(Avg('RatingValue'))
+
+        if avg_rates['RatingValue__avg'] is not None:
+            avg_int = int(avg_rates['RatingValue__avg'])
+
+        comments = Comment.objects.filter(Artist=artist_name,
+                                          Album=album_name,
+                                          Song=song_title).order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
@@ -121,9 +126,25 @@ def song(request, artist_name, album_name, song_title):
 
 def artist(request, artist_name):
     comment_form = CommentForm({'author': request.user.username,
-                                'artist': artist_name})
+                                'artist': artist_name,
+                                'comment_page': 'artist'})
+
+    rating_form = RatingForm({'author': request.user.username,
+                              'artist': artist_name,
+                              'rating_page': 'artist'})
+
     try:
-        comments = Comment.objects.filter(Artist=artist_name, Album='', Song='').order_by('id')
+        rates = Rating.objects.filter(Artist=artist_name,
+                                      Album='',
+                                      Song='').order_by('-id')[:10]
+        avg_rates = rates.aggregate(Avg('RatingValue'))
+
+        if avg_rates['RatingValue__avg'] is not None:
+            avg_int = int(avg_rates['RatingValue__avg'])
+
+        comments = Comment.objects.filter(Artist=artist_name,
+                                          Album='',
+                                          Song='').order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
@@ -133,14 +154,27 @@ def artist(request, artist_name):
 
 
 def album(request, artist_name, album_name):
-    # context_dict = dict()
-    # context_dict['page_title'] = album_name + ' by: ' + artist_name
 
     comment_form = CommentForm({'author': request.user.username,
                                 'artist': artist_name,
-                                'album': album_name})
+                                'album': album_name,
+                                'comment_page': 'album'})
+
+    rating_form = RatingForm({'author': request.user.username,
+                              'artist': artist_name,
+                              'album': album_name,
+                              'rating_page': 'album'})
+
     try:
-        comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song='').order_by('id')
+        rates = Rating.objects.filter(Artist=artist_name,
+                                      Album=album_name,
+                                      Song='').order_by('-id')[:10]
+        avg_rates = rates.aggregate(Avg('RatingValue'))
+
+        if avg_rates['RatingValue__avg'] is not None:
+            avg_int = int(avg_rates['RatingValue__avg'])
+
+        comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song='').order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
@@ -158,13 +192,37 @@ def comment_post(request):
                                          Content=comment_form.cleaned_data["comment"],
                                          Artist=comment_form.cleaned_data["artist"],
                                          Album=comment_form.cleaned_data["album"],
-                                         Song=comment_form.cleaned_data["song"])
+                                         Song=comment_form.cleaned_data["song"],
+                                         Comment_page=comment_form.cleaned_data["comment_page"])
             com.save()
-            return HttpResponseRedirect(reverse('home'))
-        else:
-            return HttpResponse("error1")
 
-    return HttpResponse("error2")
+        else:
+            return HttpResponse("Submit failed")
+    if com.Comment_page == 'artist':
+        return HttpResponseRedirect('/view' + '/' + com.Comment_page + '/' + com.Artist + '/' + com.Album)
+    else:
+        return HttpResponseRedirect('/view' + '/' + com.Comment_page + '/' + com.Artist + '/' + com.Album + '/' + com.Song)
+
+
+def rating_post(request):
+    if request.method == 'POST':
+        rating_form = RatingForm(data=request.POST)
+        if rating_form.is_valid():
+            rate = Rating.objects.create(Username=rating_form.cleaned_data["author"],
+                                         Artist=rating_form.cleaned_data["artist"],
+                                         Album=rating_form.cleaned_data["album"],
+                                         Song=rating_form.cleaned_data["song"],
+                                         RatingValue=rating_form.cleaned_data["value"],
+                                         Rating_page=rating_form.cleaned_data["rating_page"])
+            rate.save()
+
+        else:
+            return HttpResponse("Rating failed")
+
+    if rate.Rating_page == 'artist':
+        return HttpResponseRedirect('/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album)
+    else:
+        return HttpResponseRedirect('/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
 
 
 

@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^account/profile/(?P<profile_id>[\d]+)/$', views.profile, name='profile'),
     url(r'^playlist/(?P<playlist_name>[\w\-]+)/$', views.playlist, name='playlist'),
     url(r'^admin/', admin.site.urls, name='admin'),
-    url(r'^components/new_comment$', views.comment_post, name='comment_post'),
+    url(r'^components/new_comment/$', views.comment_post, name='comment_post'),
+    url(r'^components/rate_modal/$', views.rating_post, name='rating_post'),
     # url(r'^test/$', views.test, name='test')
 ]
