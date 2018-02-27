@@ -2,20 +2,16 @@ from django.db import models
 
 from django import forms
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
+
 
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
 
-class Genre(models.Model):
-    Name = models.CharField(max_length=128, unique=True)
-    
-    def __str__(self):
-        return "%s the genre" % self.Name
-
-
 class Artist(models.Model):
+    ArtistSlug = models.SlugField()
     Name = models.CharField(max_length=400, unique=True)
     Featuring = models.CharField(max_length=400)
     isBand = models.BooleanField(default=False)
@@ -24,30 +20,56 @@ class Artist(models.Model):
     Comment = models.TextField(None)
     PersonalWebsite = models.CharField(max_length=400)
     PictureURL = models.URLField(default="")
-    NumberAlbum = models.IntegerField(default=0)
-    #ID from Deezer
     ArtistDeezerID = models.IntegerField(default=0)
+
     def __str__(self):
-        return "Artist Name %s " % self.Name
+        return "%s " % self.Name
+
+    def save(self):
+        self.ArtistSlug = slugify(self.Name)
+        super(Artist, self).save()
 
 
-class Song(models.Model):
-    Title = models.CharField(max_length=200)
-    ArtistName = models.CharField(max_length=400,default="")
-    URL = models.URLField()
-
-    ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE,
-                                 primary_key=True)
+class Album(models.Model):
+    AlbumSlug = models.SlugField()
+    Title = models.CharField(max_length=400)
+    Artist = models.OneToOneField(Artist, models.CASCADE)
+    UploadDate = models.DateField(null=True)
+    ReleasedDate = models.DateField(null=True)
     Rating = models.FloatField(default=0)
     Comment = models.TextField(default="")
     PictureURL = models.URLField(default="")
-    ArtistDeezerID =  models.IntegerField(default=0)
-    SongDeezerID = models.IntegerField(default=0)
+    NumberOfTracks = models.IntegerField(default=1)
+    ArtistDeezerID = models.IntegerField(default=0)
     AlbumDeezerID = models.IntegerField(default=0)
 
     def __str__(self):
-        return "%s is the song" % self.Title
+        return "%s" % self.Title
+
+    def save(self):
+        self.AlbumSlug = slugify(self.Title)
+        super(Album, self).save()
+
+
+class Song(models.Model):
+    SongSlug = models.SlugField()
+    Title = models.CharField(max_length=200)
+    Album = models.OneToOneField(Album, models.CASCADE)
+    Artist = models.OneToOneField(Artist, models.CASCADE)
+    Rating = models.FloatField(default=0)
+    Comment = models.TextField(default="")
+    PictureURL = models.URLField(default="")
+    PreviewURL = models.URLField(default="")
+    SongDeezerID = models.IntegerField(default=0)
+    ArtistDeezerID = models.IntegerField(default=0)
+    AlbumDeezerID = models.IntegerField(default=0)
+
+    def __str__(self):
+        return "%s" % self.Title
+
+    def save(self):
+        self.SongSlug = slugify(self.Title)
+        super(Song, self).save()
 
 
 class Comment(models.Model):
@@ -59,7 +81,7 @@ class Comment(models.Model):
     Comment_page = models.CharField(max_length=400)
 
     def __str__(self):
-        return "%s is content of comment" % self.Content
+        return "%s" % self.Content
 
 
 class Rating(models.Model):
@@ -71,36 +93,13 @@ class Rating(models.Model):
     Rating_page = models.CharField(max_length=400)
 
     def __str__(self):
-        return "Rating Value %s" % self.RatingValue
-
-
-class Album(models.Model):
-    ItemID = models.IntegerField(unique=True, default=0)
-    Title = models.CharField(max_length=400)
-    Artist = models.OneToOneField(Artist, models.CASCADE)
-    URL = models.URLField()
-    UploadDate = models.DateField()
-    ReleasedDate = models.DateField()
-    Genre = models.OneToOneField(Genre, on_delete=models.CASCADE)
-    Rating = models.FloatField(default=0)
-    Comment = models.TextField(None)
-    Song = models.ForeignKey(Song)
-    PictureURL = models.URLField(default="")
-    NumberOfTracks = models.IntegerField(default=1)
-
-    ArtistDeezerID = models.IntegerField(default=0)
-    AlbumDeezerID = models.IntegerField(default=0)
-
-    def __str__(self):
-        return "Album Name %s " % self.Title
-
+        return "%s - %s" % self.RatingType % self.RatingValue
 
 class PlayList(models.Model):
     PlayListName = models.CharField(max_length=400)
-    UserID = models.IntegerField()
-    Song = models.ForeignKey(Song)
+    UserID = models.ForeignKey(User)
+    Songs = models.ManyToManyField(Song)
     CreatedDate = models.DateField()
 
     def __str__(self):
-        return "Play List Name %s " % self.PlayListName
-
+        return "%s" % self.PlayListName
