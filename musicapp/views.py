@@ -17,10 +17,29 @@ from django.core.exceptions import ObjectDoesNotExist
 from musicapp.helpers import *
 import requests
 
-
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
+
+    # 1. Get the top and new songs
+    topSongs_list = Song.objects.order_by('-Rating')[:10]
+    newSongs_list = Song.objects.order_by('-ReleasedDate')[:10]
+
+    # 2. Get the top and new album
+    topAlbums_list = Album.objects.order_by('-Rating')[:10]
+    newAlbums_list = Album.objects.order_by('-ReleasedDate')[:10]
+
+    # 3. Get the top and new artist
+    topArtistes_list = Artist.objects.order_by('-Rating')[:10]
+    # newArtistes_list = Artist.objects.order_by('-Rating')[:10]
+
+    context_dict['top_songs']    = topSongs_list
+    context_dict['new_songs']    = newSongs_list
+    context_dict['top_albums']   = topAlbums_list
+    context_dict['new_albums']   = newAlbums_list
+    context_dict['top_artistes'] = topArtistes_list
+    # context_dict['top_artistes'] = newArtistes_list
+
     return render(request, 'musicapp/index.html', context=context_dict)
 
 

@@ -10,7 +10,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
 
-
 class Artist(models.Model):
     ArtistSlug = models.SlugField()
     Name = models.CharField(max_length=400, unique=True)
@@ -99,3 +98,4 @@ class PlayList(models.Model):
 
     def __str__(self):
         return "%s" % self.PlayListName
+

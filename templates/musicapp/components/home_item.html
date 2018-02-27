@@ -1,0 +1,63 @@
+{% if type == 'top_song' %}
+    {% for result in top_songs %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Title }}</p>
+        </div>
+    {% endfor %}
+
+{% elif type == 'new_song' %}
+    {% for result in new_song %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Title }}</p>
+        </div>
+    {% endfor %}
+
+{% elif type == 'top_album' %}
+    {% for result in top_album %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Title }}</p>
+        </div>
+    {% endfor %}
+
+{% elif type == 'new_album' %}
+    {% for result in new_album %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Title }}</p>
+        </div>
+    {% endfor %}
+
+{% elif type == 'top_artist' %}
+    {% for result in top_artist %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Name }}</p>
+        </div>
+    {% endfor %}
+
+<!-- {% elif type == 'new_artist' %}
+    {% for result in new_artist %}
+        <div class="card selectable">
+            <a href="{{ result.Slug }}">
+                <img class="img-responsive" src="{{ result.PictureURL }}"/>
+            </a>
+            <p>{{ result.Name }}</p>
+        </div>
+    {% endfor %} -->
+
+{% else %}
+    <p style="color: red;text-align: center"> There are no records found. Please try with different criteria !</p>
+{% endif %}
