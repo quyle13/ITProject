@@ -42,6 +42,7 @@ class RatingForm(forms.Form):
     song = forms.CharField(widget=forms.HiddenInput, required=False)
     rating_page = forms.CharField(widget=forms.HiddenInput(), required=False)
 
+
 class UserEditForm(forms.ModelForm):
     current_password = forms.CharField(widget=forms.PasswordInput(), required=False)
     password = forms.CharField(widget=forms.PasswordInput(), required=False)

@@ -18,7 +18,6 @@ from musicapp.helpers import *
 import requests
 
 
-
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
@@ -110,9 +109,6 @@ def profile(request):
                 profile_picture = request.FILES.get('profile_picture')
                 fs = FileSystemStorage()
                 filename = profile_picture.name
-                file, ext = filename.split('.')
-                file = request.user.username
-                filename = file + '.' + ext
                 filename = fs.save(filename, profile_picture)
                 uploaded_file_url = fs.url(filename)
                 try:
@@ -181,7 +177,6 @@ def search(request):
 
 
 def song(request, artist_name, album_name, song_title):
-
     comment_form = CommentForm({'author': request.user.username,
                                 'artist': artist_name,
                                 'album': album_name,
@@ -243,7 +238,6 @@ def artist(request, artist_name):
 
 
 def album(request, artist_name, album_name):
-
     comment_form = CommentForm({'author': request.user.username,
                                 'artist': artist_name,
                                 'album': album_name,
@@ -270,6 +264,9 @@ def album(request, artist_name, album_name):
     except Exception as e:
         print(e)
 
+    album = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
+    songs = Song.objects.filter(Album=album)
+    print(songs)
     return render(request, 'musicapp/album.html', locals())
 
 
@@ -290,7 +287,8 @@ def comment_post(request):
     if com.Comment_page == 'artist':
         return HttpResponseRedirect('/view' + '/' + com.Comment_page + '/' + com.Artist + '/' + com.Album)
     else:
-        return HttpResponseRedirect('/view' + '/' + com.Comment_page + '/' + com.Artist + '/' + com.Album + '/' + com.Song)
+        return HttpResponseRedirect(
+            '/view' + '/' + com.Comment_page + '/' + com.Artist + '/' + com.Album + '/' + com.Song)
 
 
 def rating_post(request):
@@ -311,10 +309,12 @@ def rating_post(request):
     if rate.Rating_page == 'artist':
         return HttpResponseRedirect('/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album)
     else:
-        return HttpResponseRedirect('/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
+        return HttpResponseRedirect(
+            '/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
 
-def song(request, artist_name, album_name, song_title):
+
+def song(request, artist_name, album_name, song_name):
     context_dict = dict()
-    context_dict['page_title'] = song_title + ' by: ' + artist_name + ' on: ' + album_name
+    context_dict['on_song_page'] = True
+    context_dict['page_title'] = song_name + ' by: ' + artist_name + ' on: ' + album_name
     return render(request, 'musicapp/song.html', context=context_dict)
-

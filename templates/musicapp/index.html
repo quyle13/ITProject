@@ -10,10 +10,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
-                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                        {% include 'musicapp/components/search_results.html' with type='song' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
-                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                        {% include 'musicapp/components/search_results.html' with type='song' %}
                     </div>
                 </div>
             </div>
@@ -24,10 +24,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
-                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                        {% include 'musicapp/components/search_results.html' with type='album' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
-                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                        {% include 'musicapp/components/search_results.html' with type='album' %}
                     </div>
                 </div>
             </div>
@@ -38,10 +38,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
-                        {% include 'musicapp/components/display_item.html' with type='artist' %}
+                        {% include 'musicapp/components/search_results.html' with type='artist' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
-                        {% include 'musicapp/components/display_item.html' with type='artist' %}
+                        {% include 'musicapp/components/search_results.html' with type='artist' %}
                     </div>
                 </div>
             </div>

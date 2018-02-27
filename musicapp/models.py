@@ -10,14 +10,13 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
 
+
 class Artist(models.Model):
     ArtistSlug = models.SlugField()
     Name = models.CharField(max_length=400, unique=True)
     Featuring = models.CharField(max_length=400)
     isBand = models.BooleanField(default=False)
     Member = models.CharField(max_length=4000)
-    Rating = models.FloatField(default=0)
-    Comment = models.TextField(None)
     PersonalWebsite = models.CharField(max_length=400)
     PictureURL = models.URLField(default="")
     ArtistDeezerID = models.IntegerField(default=0)
@@ -33,11 +32,9 @@ class Artist(models.Model):
 class Album(models.Model):
     AlbumSlug = models.SlugField()
     Title = models.CharField(max_length=400)
-    Artist = models.OneToOneField(Artist, models.CASCADE)
+    Artist = models.ForeignKey(Artist, models.CASCADE)
     UploadDate = models.DateField(null=True)
     ReleasedDate = models.DateField(null=True)
-    Rating = models.FloatField(default=0)
-    Comment = models.TextField(default="")
     PictureURL = models.URLField(default="")
     NumberOfTracks = models.IntegerField(default=1)
     ArtistDeezerID = models.IntegerField(default=0)
@@ -54,10 +51,8 @@ class Album(models.Model):
 class Song(models.Model):
     SongSlug = models.SlugField()
     Title = models.CharField(max_length=200)
-    Album = models.OneToOneField(Album, models.CASCADE)
-    Artist = models.OneToOneField(Artist, models.CASCADE)
-    Rating = models.FloatField(default=0)
-    Comment = models.TextField(default="")
+    Album = models.ForeignKey(Album, models.CASCADE)
+    Artist = models.ForeignKey(Artist, models.CASCADE)
     PictureURL = models.URLField(default="")
     PreviewURL = models.URLField(default="")
     SongDeezerID = models.IntegerField(default=0)
@@ -94,6 +89,7 @@ class Rating(models.Model):
 
     def __str__(self):
         return "%s - %s" % self.RatingType % self.RatingValue
+
 
 class PlayList(models.Model):
     PlayListName = models.CharField(max_length=400)

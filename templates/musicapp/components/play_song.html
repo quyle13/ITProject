@@ -1,16 +1,22 @@
 <div class="card selectable track">
     <div class="col-xs-9">
-        <h4>Song Title</h4>
+        {% if not on_song_page %}
+        <a href="{% url 'song' artist_name=song.Artist.ArtistSlug album_name=song.Album.AlbumSlug song_name=song.SongSlug %}">
+            <h4>{{ song.Title }}</h4>
+        </a>
+        {% else %}
+            <h4>{{ song.Title }}</h4>
+        {% endif %}
     </div>
     <div class="col-xs-3">
-        <button class="btn btn-default control" id="player" type="button" src="https://e-cdns-preview-1.dzcdn.net/stream/17cb0814dd83646cd91d7fe53392f333-10.mp3">
+        <button class="btn btn-default control" id="player" type="button" src="{{ song.PreviewURL }}">
             <i class="fa fa-play-circle-o" title="Play song"></i>
 
             <!-- The type of the button is changed by the script player.js:
                 - <i class="fa fa-play-circle-o" title="Play song"></i>
                 - <i class="fa fa-pause-circle" title="Pause song"></i> -->
         </button>
-        <button class="btn btn-default control" id="mute" type="button" src="https://e-cdns-preview-1.dzcdn.net/stream/17cb0814dd83646cd91d7fe53392f333-10.mp3">
+        <button class="btn btn-default control" id="mute" type="button" src="{{ song.PreviewURL }}">
             <i class="fa fa-volume-up" title="Unmute"></i>
 
             <!-- The type of the button is changed by the script player.js:
