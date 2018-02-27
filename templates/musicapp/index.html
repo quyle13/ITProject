@@ -10,10 +10,10 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-songs">
-                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                        {% include 'musicapp/components/home_item.html' with type='top_song' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-songs">
-                        {% include 'musicapp/components/display_item.html' with type='song' %}
+                        {% include 'musicapp/components/home_item.html' with type='new_song' %}
                     </div>
                 </div>
             </div>
@@ -24,25 +24,25 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-albums">
-                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                        {% include 'musicapp/components/home_item.html' with type='top_album' %}
                     </div>
                     <div class="tab-pane tab-container" role="tabpanel" id="new-albums">
-                        {% include 'musicapp/components/display_item.html' with type='album' %}
+                        {% include 'musicapp/components/home_item.html' with type='new_album' %}
                     </div>
                 </div>
             </div>
             <div class="tab-block">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#top-artists" role="tab" data-toggle="tab">Top Artists</a></li>
-                    <li><a href="#new-artist" role="tab" data-toggle="tab">New Artists</a></li>
+                    <!-- <li><a href="#new-artist" role="tab" data-toggle="tab">New Artists</a></li> -->
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active tab-container" role="tabpanel" id="top-artists">
-                        {% include 'musicapp/components/display_item.html' with type='artist' %}
+                        {% include 'musicapp/components/home_item.html' with type='top_artist' %}
                     </div>
-                    <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
-                        {% include 'musicapp/components/display_item.html' with type='artist' %}
-                    </div>
+                    <!-- <div class="tab-pane tab-container" role="tabpanel" id="new-artist">
+                        {% include 'musicapp/components/home_item.html' with type='new_artist' %}
+                    </div> -->
                 </div>
             </div>
         </div>
