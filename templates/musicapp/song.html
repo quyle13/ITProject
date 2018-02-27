@@ -4,13 +4,49 @@
     {% include 'musicapp/components/rate_modal.html' with type='Song' %}
     <div class="relative">
         <h2>Song Title</h2>
-        <div id="rating">
-            <i class="glyphicon glyphicon-star-empty"></i>
-            <i class="glyphicon glyphicon-star"></i>
-            <i class="glyphicon glyphicon-star"></i>
-            <i class="glyphicon glyphicon-star"></i>
-            <i class="glyphicon glyphicon-star"></i>
-        </div>
+        {% if avg_int == 5 %}
+            <div id="rating">
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i></div>
+        {% elif avg_int == 4 %}
+           <div id="rating">
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star-empty"></i></div>
+        {% elif avg_int == 3 %}
+            <div id="rating">
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i></div>
+        {% elif avg_int == 2 %}
+            <div id="rating">
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i></div>
+        {% elif avg_int == 1 %}
+            <div id="rating">
+                <i class="glyphicon glyphicon-star"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i></div>
+        {% else %}
+            <div id="rating">
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i>
+                <i class="glyphicon glyphicon-star-empty"></i></div>
+        {% endif %}
         <button class="btn btn-primary rate"
                 type="button" data-toggle="modal" data-target="#rate-modal">
             rate song
@@ -57,9 +93,6 @@
         <div class="clearfix"></div>
         <hr>
         <div id="comments">
-            {% include 'musicapp/components/comment.html' %}
-            {% include 'musicapp/components/comment.html' %}
-            {% include 'musicapp/components/comment.html' %}
             {% include 'musicapp/components/comment.html' %}
         </div>
         {% include 'musicapp/components/new_comment.html' with type='song' %}

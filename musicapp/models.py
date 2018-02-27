@@ -1,4 +1,6 @@
 from django.db import models
+
+from django import forms
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
@@ -7,7 +9,6 @@ from django.template.defaultfilters import slugify
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
-
 
 class Artist(models.Model):
     ArtistSlug = models.SlugField()
@@ -72,25 +73,27 @@ class Song(models.Model):
 
 
 class Comment(models.Model):
-    Content = models.CharField(max_length=40000)
-    RatingType = models.CharField(max_length=128)
-    ItemID = models.IntegerField()
-    RatingDate = models.DateField()
+    Username = models.CharField(max_length=50)
+    Content = models.TextField(max_length=1000)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    Comment_page = models.CharField(max_length=400)
 
     def __str__(self):
         return "%s" % self.Content
 
 
 class Rating(models.Model):
-    ItemID = models.IntegerField()
-    RatingType = models.CharField(max_length=128)
-    UserID = models.IntegerField()
-    RatingDate = models.DateField()
-    RatingValue = models.FloatField(default=0)
+    Username = models.CharField(max_length=50)
+    Artist = models.CharField(max_length=400)
+    Album = models.CharField(max_length=400)
+    Song = models.CharField(max_length=200)
+    RatingValue = models.IntegerField()
+    Rating_page = models.CharField(max_length=400)
 
     def __str__(self):
         return "%s - %s" % self.RatingType % self.RatingValue
-
 
 class PlayList(models.Model):
     PlayListName = models.CharField(max_length=400)

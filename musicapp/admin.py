@@ -8,3 +8,4 @@ admin.site.register(Song)
 admin.site.register(Rating)
 admin.site.register(Album)
 admin.site.register(PlayList)
+

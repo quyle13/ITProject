@@ -25,6 +25,23 @@ class UserForm(forms.ModelForm):
         return email
 
 
+class CommentForm(forms.Form):
+    author = forms.CharField(widget=forms.HiddenInput())
+    comment = forms.CharField(widget=forms.HiddenInput())
+    artist = forms.CharField(widget=forms.HiddenInput(), required=False)
+    album = forms.CharField(widget=forms.HiddenInput(), required=False)
+    song = forms.CharField(widget=forms.HiddenInput(), required=False)
+    comment_page = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+
+class RatingForm(forms.Form):
+    author = forms.CharField(widget=forms.HiddenInput(), required=False)
+    value = forms.IntegerField(widget=forms.HiddenInput())
+    artist = forms.CharField(widget=forms.HiddenInput(), required=False)
+    album = forms.CharField(widget=forms.HiddenInput, required=False)
+    song = forms.CharField(widget=forms.HiddenInput, required=False)
+    rating_page = forms.CharField(widget=forms.HiddenInput(), required=False)
+
 class UserEditForm(forms.ModelForm):
     current_password = forms.CharField(widget=forms.PasswordInput(), required=False)
     password = forms.CharField(widget=forms.PasswordInput(), required=False)
