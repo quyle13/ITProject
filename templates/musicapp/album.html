@@ -3,7 +3,11 @@
 {% block content %}
     {% include 'musicapp/components/rate_modal.html' with type='album' %}
     <div class="relative">
-        <h2>Album Name</h2>
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>{{ album.Title }}</h2>
+            </div>
+        </div>
         {% if avg_int == 5 %}
             <div id="rating">
                 <i class="glyphicon glyphicon-star"></i>
@@ -12,7 +16,7 @@
                 <i class="glyphicon glyphicon-star"></i>
                 <i class="glyphicon glyphicon-star"></i></div>
         {% elif avg_int == 4 %}
-           <div id="rating">
+            <div id="rating">
                 <i class="glyphicon glyphicon-star"></i>
                 <i class="glyphicon glyphicon-star"></i>
                 <i class="glyphicon glyphicon-star"></i>
@@ -52,18 +56,16 @@
         </button>
         <hr>
     </div>
-    <div class="relative"><img class="profile-photo">
+    <div class="relative"><img src="{{ album.PictureURL }}" class="profile-photo">
         <h4>Details:</h4>
         <div class="row">
             <div class="col-sm-2 col-xs-3">
                 <p>Artist:</p>
-                <p>Location:</p>
-                <p>Release Date:&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
             </div>
             <div class="col-sm-10 col-xs-9">
-                <p><a href="#">Link</a></p>
-                <p>Paragraph</p>
-                <p>Paragraph</p>
+                <p><a href="{% url 'artist' album.Artist.ArtistSlug %}">{{ album.Artist.Name }}</a></p>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -74,7 +76,9 @@
         <div id="tracks">
             <div class="row">
                 <div class="col-sm-8">
-                    {% include 'musicapp/components/play_song.html' %}
+                    {% for song in songs %}
+                        {% include 'musicapp/components/play_song.html' with song=song %}
+                    {% endfor %}
                 </div>
                 <div class="col-sm-4 hidden-xs" id="lyrics">
                     <h5>Lyrics:</h5>

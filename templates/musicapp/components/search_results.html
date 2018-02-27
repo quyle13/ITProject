@@ -1,0 +1,53 @@
+{% if returned_list %}
+    {% for result in returned_list %}
+        <div class="card selectable">
+            {% if result.type == 'song' %}
+                <a href="{% url 'song' result.ArtistSlug result.AlbumSlug result.SongSlug %}">
+                    <img class="img-responsive" src="{{ result.PictureURL }}"/>
+                </a>
+                <p>{{ result.title }}</p>
+            {% elif result.type == 'artist' %}
+                <a href="{% url 'artist' result.ArtistSlug %}">
+                    <img class="img-responsive" src="{{ result.PictureURL }}"/>
+                </a>
+                <p>{{ result.name }}</p>
+            {% else %}
+                <a href="{% url 'album' result.ArtistSlug result.AlbumSlug %}">
+                    <img class="img-responsive" src="{{ result.PictureURL }}"/>
+                </a>
+                <p>{{ result.title }}</p>
+
+            {% endif %}
+            <span class="text-capitalize {{ result.type }}">{{ result.type }}</span>
+            <div class="clearfix"></div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="color: red;text-align: center"> There are no records found. Please try with different criteria !</p>
+{% endif %}
+<div class="clearfix"></div>
+<div class="pagination-nav"></div>
+
+{% if returned_list.has_other_pages %}
+    <nav class="center">
+        <ul class="pagination">
+            {% if returned_list.has_previous %}
+                <li><a href="?page={{ returned_list.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in returned_list.paginator.page_range %}
+                {% if returned_list.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if returned_list.has_next %}
+                <li><a href="?page={{ returned_list.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
