@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm, CommentForm, RatingForm
+from musicapp.forms import UserForm, CommentForm, RatingForm, PlaylistForm
 from .models import *
 from django.db.models import Avg
 from musicapp.forms import UserForm, UserEditForm
@@ -111,12 +111,16 @@ def profile(request):
     context_dict = dict()
     context_dict['page_title'] = 'My Profile'
     context_dict['user'] = request.user
-    context_dict['playlists'] = None
+    context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
     context_dict['playlist_songs'] = None
 
     if request.method == 'POST':
         user_edit_form = UserEditForm(user=request.user, data=request.POST)
+        add_playlist_form = PlaylistForm(data=request.POST)
+
         context_dict['user_edit_form'] = user_edit_form
+        context_dict['add_playlist_form'] = add_playlist_form
+
         if user_edit_form.is_valid():
             if user_edit_form.cleaned_data.get('password') != '':
                 u = User.objects.get(username__exact=request.user.username)
@@ -142,11 +146,20 @@ def profile(request):
             if user_edit_form.cleaned_data.get('password') == '' and request.FILES.get('profile_picture') is None:
                 context_dict['notification_warning'] = True
                 context_dict['notification_message'] = 'No change made to your profile'
+        elif add_playlist_form.is_valid():
+            p = PlayList()
+            p.UserID = request.user
+            p.Name = add_playlist_form.cleaned_data.get('playlist_name')
+            p.save()
+            context_dict['notification_success'] = True
+            context_dict['notification_message'] = 'New playlist added'
         else:
             print(user_edit_form.errors)
+            print(add_playlist_form.errors)
 
     else:
         user_edit_form = UserEditForm(user=request.user)
+        add_playlist_form = PlaylistForm()
     return render(request, 'musicapp/profile.html', context=context_dict)
 
 

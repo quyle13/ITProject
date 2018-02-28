@@ -680,6 +680,10 @@ div.card:after {
     text-align: center;
     display: block;
 }
+.error {
+    color: red;
+    text-align: center;
+}
 
 .notification {
     position: absolute;

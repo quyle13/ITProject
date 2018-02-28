@@ -1,0 +1,15 @@
+{% load static %}
+{% if playlists %}
+    {% for playlist in playlists %}
+        <div class="card selectable">
+            <a href="{% url 'playlist' playlist.PlayListSlug %}">
+                <img class="img-responsive" src="{% static 'img/headphone.ico' %}"/>
+            </a>
+            <p>{{ playlist.Name }}</p>
+            <span class="text-capitalize playlist">Playlist</span>
+            <div class="clearfix"></div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="error">You do not have any playlists. Add a playlist.</p>
+{% endif %}
