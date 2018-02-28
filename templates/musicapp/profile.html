@@ -66,7 +66,9 @@
         <div id="tracks">
             <div class="row">
                 <div class="col-sm-8">
-{#                    {% include 'musicapp/components/play_song.html' with song=song %}#}
+                    {% for song in playlist_songs %}
+                        {% include 'musicapp/components/play_song.html' with song=song %}
+                    {% endfor %}
                 </div>
             </div>
         </div>

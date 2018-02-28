@@ -1,9 +1,9 @@
 <div class="card selectable track">
     <div class="col-xs-9">
         {% if not on_song_page %}
-        <a href="{% url 'song' artist_name=song.Artist.ArtistSlug album_name=song.Album.AlbumSlug song_name=song.SongSlug %}">
-            <h4>{{ song.Title }}</h4>
-        </a>
+            <a href="{% url 'song' artist_name=song.Artist.ArtistSlug album_name=song.Album.AlbumSlug song_name=song.SongSlug %}">
+                <h4>{{ song.Title }}</h4>
+            </a>
         {% else %}
             <h4>{{ song.Title }}</h4>
         {% endif %}
@@ -23,9 +23,26 @@
                 - <i class="fa fa-volume-off" title="Mute"></i>
                 - <i class="fa fa-volume-up" title="Unmute"></i> -->
         </button>
-        <button class="btn btn-default control" type="button" title="Add song to playlist">
-            <i class="fa fa-music"></i>
-        </button>
+
+        {% if user.is_authenticated %}
+            <div class="dropdown">
+                <button
+                        class="btn btn-default control dropdown-toggle" data-toggle="dropdown" aria-expanded="false"
+                        type="button" title="Add song to playlist">
+                    <i class="fa fa-music"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    {% for playlist in playlists %}
+                        <li role="presentation" aria-label="{{ song.Name }}">
+                            <a class="add-to-playlist" aria-label="{{ playlist.id}}-{{ song.id }}">
+                                {{ playlist.Name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <input type="hidden" value="{{ song.id }}">
+                </ul>
+            </div>
+        {% endif %}
     </div>
     <div class="clearfix"></div>
 </div>

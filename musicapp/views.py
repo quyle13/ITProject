@@ -112,7 +112,7 @@ def profile(request):
     context_dict['page_title'] = 'My Profile'
     context_dict['user'] = request.user
     context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
-    context_dict['playlist_songs'] = None
+    context_dict['playlist_songs'] = Song.objects.filter(playlist__in=context_dict['playlists']).distinct()
 
     if request.method == 'POST':
         user_edit_form = UserEditForm(user=request.user, data=request.POST)
@@ -298,7 +298,10 @@ def album(request, artist_name, album_name):
 
     album = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
     songs = Song.objects.filter(Album=album)
-    print(songs)
+
+    if request.user.is_authenticated:
+        playlists = PlayList.objects.filter(UserID=request.user)
+
     return render(request, 'musicapp/album.html', locals())
 
 
