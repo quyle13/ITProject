@@ -165,7 +165,10 @@ def profile(request):
 
 def playlist(request, playlist_name):
     context_dict = dict()
-    context_dict['page_title'] = 'My Playlist'
+    context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
+    context_dict['playlist'] = PlayList.objects.get(PlayListSlug=playlist_name, UserID=request.user)
+    context_dict['page_title'] = context_dict['playlist'].Name
+    context_dict['playlist_songs'] = Song.objects.filter(playlist=context_dict['playlist']).distinct()
     return render(request, 'musicapp/playlist.html', context=context_dict)
 
 
