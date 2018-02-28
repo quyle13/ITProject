@@ -21,24 +21,27 @@ def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
 
-    # 1. Get the top and new songs
-    topSongs_list = Song.objects.order_by('-Rating')[:10]
-    newSongs_list = Song.objects.order_by('-ReleasedDate')[:10]
+    # Get the songs ordred regarding the rate
+    topSongs_list = []
+    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='song')[:5]:
+        topSongs_list.extend(Song.objects.filter(SongSlug=rate.Song))
 
-    # 2. Get the top and new album
-    topAlbums_list = Album.objects.order_by('-Rating')[:10]
-    newAlbums_list = Album.objects.order_by('-ReleasedDate')[:10]
+    # Get the albums ordred regarding the rate
+    topAlbums_list = []
+    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='album')[:5]:
+        topAlbums_list.extend(Album.objects.filter(AlbumSlug=rate.Album))
 
-    # 3. Get the top and new artist
-    topArtistes_list = Artist.objects.order_by('-Rating')[:10]
-    # newArtistes_list = Artist.objects.order_by('-Rating')[:10]
+    # Get the artists ordred regarding the rate
+    topArtistes_list = []
+    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='artist')[:5]:
+        topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
     context_dict['top_songs']    = topSongs_list
-    context_dict['new_songs']    = newSongs_list
+    # context_dict['new_songs']    = newSongs_list
     context_dict['top_albums']   = topAlbums_list
-    context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artistes'] = topArtistes_list
-    # context_dict['top_artistes'] = newArtistes_list
+    # context_dict['new_albums']   = newAlbums_list
+    context_dict['top_artists']  = topArtistes_list
+    # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
 
@@ -211,22 +214,27 @@ def search(request):
     return render(request, 'musicapp/search.html', context=context_dict)
 
 
-def song(request, artist_name, album_name, song_title):
+def song(request, artist_name, album_name, song_name):
+
+    on_song_page = True
+    page_title = song_name + ' by: ' + artist_name + ' on: ' + album_name
+
     comment_form = CommentForm({'author': request.user.username,
                                 'artist': artist_name,
                                 'album': album_name,
-                                'song': song_title,
+                                'song': song_name,
                                 'comment_page': 'song'})
 
     rating_form = RatingForm({'author': request.user.username,
                               'artist': artist_name,
                               'album': album_name,
-                              'song': song_title,
+                              'song': song_name,
                               'rating_page': 'song'})
+
     try:
         rates = Rating.objects.filter(Artist=artist_name,
                                       Album=album_name,
-                                      Song=song_title).order_by('-id')[:10]
+                                      Song=song_name).order_by('-id')[:10]
         avg_rates = rates.aggregate(Avg('RatingValue'))
 
         if avg_rates['RatingValue__avg'] is not None:
@@ -234,12 +242,14 @@ def song(request, artist_name, album_name, song_title):
 
         comments = Comment.objects.filter(Artist=artist_name,
                                           Album=album_name,
-                                          Song=song_title).order_by('-id')[:10]
+                                          Song=song_name).order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
+
     except Exception as e:
         print(e)
+
     return render(request, 'musicapp/song.html', locals())
 
 
@@ -349,10 +359,3 @@ def rating_post(request):
     else:
         return HttpResponseRedirect(
             '/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
-
-
-def song(request, artist_name, album_name, song_name):
-    context_dict = dict()
-    context_dict['on_song_page'] = True
-    context_dict['page_title'] = song_name + ' by: ' + artist_name + ' on: ' + album_name
-    return render(request, 'musicapp/song.html', context=context_dict)
