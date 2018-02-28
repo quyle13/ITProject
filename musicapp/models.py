@@ -87,7 +87,7 @@ class Rating(models.Model):
     Rating_page = models.CharField(max_length=400)
 
     def __str__(self):
-        return "%s - %s" % self.RatingType % self.RatingValue
+        return "%s - %s" % (self.Rating_page, self.RatingValue)
 
 
 class PlayList(models.Model):
@@ -98,4 +98,3 @@ class PlayList(models.Model):
 
     def __str__(self):
         return "%s" % self.PlayListName
-
