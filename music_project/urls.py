@@ -13,10 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.contrib import admin
 from musicapp import views
-from musicapp.views import *
+from musicapp import ajax_views
 from music_project import settings
 from django.conf.urls.static import static
 
@@ -38,6 +38,9 @@ urlpatterns = [
     url(r'^components/new_comment/$', views.comment_post, name='comment_post'),
     url(r'^components/rate_modal/$', views.rating_post, name='rating_post'),
     # url(r'^test/$', views.test, name='test')
+
+    # internal ajax views
+    url(r'^ajax/add-to-playlist/(?P<ids>[\w\-]+)$', ajax_views.add_to_playlist),
 ]
 
 if settings.DEBUG:

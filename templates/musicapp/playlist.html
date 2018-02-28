@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="relative">
-    <h2>Playlist Name</h2>
+    <h2>{{ playlist.Name }}</h2>
     <hr>
 </div>
 <div class="relative">
@@ -10,7 +10,9 @@
     <div id="tracks">
         <div class="row">
             <div class="col-sm-8">
-                {% include 'musicapp/components/play_song.html' %}
+                {% for song in playlist_songs %}
+                    {% include 'musicapp/components/play_song.html' with song=song %}
+                {% endfor %}
             </div>
             <div class="col-sm-4 hidden-xs" id="lyrics">
                 <h5>Lyrics:</h5>

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm, CommentForm, RatingForm
+from musicapp.forms import UserForm, CommentForm, RatingForm, PlaylistForm
 from .models import *
 from django.db.models import Avg
 from musicapp.forms import UserForm, UserEditForm
@@ -114,12 +114,16 @@ def profile(request):
     context_dict = dict()
     context_dict['page_title'] = 'My Profile'
     context_dict['user'] = request.user
-    context_dict['playlists'] = None
-    context_dict['playlist_songs'] = None
+    context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
+    context_dict['playlist_songs'] = Song.objects.filter(playlist__in=context_dict['playlists']).distinct()
 
     if request.method == 'POST':
         user_edit_form = UserEditForm(user=request.user, data=request.POST)
+        add_playlist_form = PlaylistForm(data=request.POST)
+
         context_dict['user_edit_form'] = user_edit_form
+        context_dict['add_playlist_form'] = add_playlist_form
+
         if user_edit_form.is_valid():
             if user_edit_form.cleaned_data.get('password') != '':
                 u = User.objects.get(username__exact=request.user.username)
@@ -145,17 +149,29 @@ def profile(request):
             if user_edit_form.cleaned_data.get('password') == '' and request.FILES.get('profile_picture') is None:
                 context_dict['notification_warning'] = True
                 context_dict['notification_message'] = 'No change made to your profile'
+        elif add_playlist_form.is_valid():
+            p = PlayList()
+            p.UserID = request.user
+            p.Name = add_playlist_form.cleaned_data.get('playlist_name')
+            p.save()
+            context_dict['notification_success'] = True
+            context_dict['notification_message'] = 'New playlist added'
         else:
             print(user_edit_form.errors)
+            print(add_playlist_form.errors)
 
     else:
         user_edit_form = UserEditForm(user=request.user)
+        add_playlist_form = PlaylistForm()
     return render(request, 'musicapp/profile.html', context=context_dict)
 
 
 def playlist(request, playlist_name):
     context_dict = dict()
-    context_dict['page_title'] = 'My Playlist'
+    context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
+    context_dict['playlist'] = PlayList.objects.get(PlayListSlug=playlist_name, UserID=request.user)
+    context_dict['page_title'] = context_dict['playlist'].Name
+    context_dict['playlist_songs'] = Song.objects.filter(playlist=context_dict['playlist']).distinct()
     return render(request, 'musicapp/playlist.html', context=context_dict)
 
 
@@ -295,7 +311,10 @@ def album(request, artist_name, album_name):
 
     album = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
     songs = Song.objects.filter(Album=album)
-    print(songs)
+
+    if request.user.is_authenticated:
+        playlists = PlayList.objects.filter(UserID=request.user)
+
     return render(request, 'musicapp/album.html', locals())
 
 

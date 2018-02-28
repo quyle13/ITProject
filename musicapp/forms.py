@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from musicapp.models import PlayList
 
 
 class UserForm(forms.ModelForm):
@@ -68,3 +69,11 @@ class UserEditForm(forms.ModelForm):
         confirm_password = cleaned_data.get("confirm_password")
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match")
+
+
+class PlaylistForm(forms.ModelForm):
+    playlist_name = forms.CharField(widget=forms.TextInput())
+
+    class Meta:
+        model = PlayList
+        fields = ('playlist_name',)

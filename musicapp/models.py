@@ -91,10 +91,15 @@ class Rating(models.Model):
 
 
 class PlayList(models.Model):
-    PlayListName = models.CharField(max_length=400)
+    PlayListSlug = models.SlugField()
+    Name = models.CharField(max_length=400)
     UserID = models.ForeignKey(User)
-    Songs = models.ManyToManyField(Song)
-    CreatedDate = models.DateField()
+    Songs = models.ManyToManyField(Song, blank=True)
+    CreatedDate = models.DateField(auto_now=True)
 
     def __str__(self):
-        return "%s" % self.PlayListName
+        return "%s" % self.Name
+
+    def save(self):
+        self.PlayListSlug = slugify(self.Name)
+        super(PlayList, self).save()

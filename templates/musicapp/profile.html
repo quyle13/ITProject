@@ -24,6 +24,7 @@
         </div>
     {% endif %}
     {% include 'musicapp/components/edit_profile_modal.html' %}
+    {% include 'musicapp/components/add_playlist_modal.html' %}
     <div class="relative">
         <h2>@{{ user.username }}</h2>
         <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#edit-modal">
@@ -51,8 +52,11 @@
     </div>
     <div class="relative">
         <h4>My Playlists:</h4>
+        <button class="btn btn-primary edit" type="button" data-toggle="modal" data-target="#add-modal">
+            Add Playlist
+        </button>
         <div class="scroll-list">
-            {% include 'musicapp/components/search_results.html' with type='playlist' %}
+            {% include 'musicapp/components/playlist_item.html' with playlists=playlists %}
         </div>
         <div class="clearfix"></div>
         <hr>
@@ -62,7 +66,9 @@
         <div id="tracks">
             <div class="row">
                 <div class="col-sm-8">
-                    {% include 'musicapp/components/play_song.html' %}
+                    {% for song in playlist_songs %}
+                        {% include 'musicapp/components/play_song.html' with song=song %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
