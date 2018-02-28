@@ -17,6 +17,8 @@ state  = songState.STOP;
 volume = volumeState.LOUD;
 song.preload = "auto";
 
+var player = 'undefined'
+
 /*
 * This function update the time, volume and source of the music by accessing to
 * the cookies which contain the different value
@@ -48,10 +50,10 @@ var updateData = function()
 	}
 
 	// Get the current element that is binded to the music
-	var playerList = document.querySelectorAll("#player");
+	var playerList = document.querySelectorAll('button[id^="player-"]');
 	for (i = 0; i < playerList.length; i++) {
-		if(playerList[i].src = song.src) {
-			var player = playerList[i];
+        if(playerList[i].getAttribute('src') == song.src) {
+            player = playerList[i];
 		}
 	}
 
@@ -110,6 +112,7 @@ $(document).ready(function() {
 			$(this).html('<i class="fa fa-play-circle-o" title="Play song"></i>');
 			player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
 
+            console.log("Stop Playing song: " + player.getAttribute('src'));
 		}
 		else {
 			song.play();
@@ -118,10 +121,12 @@ $(document).ready(function() {
 
 			$(this).html('<i class="fa fa-pause-circle" title="Pause song"></i>');
 			player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+
+            console.log("Start Playing song: " + player.getAttribute('src'));
 		}
 	});
 
-	$('#player').click( function(ev) {
+	$('button[id^="player-"]').click( function(ev) {
 		ev.preventDefault();
 
 		// Control if another song need to be played
@@ -132,6 +137,12 @@ $(document).ready(function() {
 			state = songState.STOP;
 			Cookies.set('song_state', state);
 			Cookies.set('song_src', song.src, {expires: 1 });
+
+            $('button[id^="player-"]').html('<i class="fa fa-play-circle-o" title="Play song"></i>');
+
+            player = $(this)[0];
+
+            console.log("New song selected: " + song.src);
 		}
 
 		// Play/Pause the song and modify the state
@@ -142,6 +153,8 @@ $(document).ready(function() {
 
 			$(this).html('<i class="fa fa-play-circle-o" title="Play song"></i>');
 			$('#header-player').html('<i class="fa fa-play-circle-o" title="Play song"></i>');
+
+            console.log("Stop Playing song: " + song.src);
 		}
 		else {
 			song.play();
@@ -150,6 +163,8 @@ $(document).ready(function() {
 
 			$(this).html('<i class="fa fa-pause-circle" title="Pause song"></i>');
 			$('#header-player').html('<i class="fa fa-pause-circle" title="Pause song"></i>');
+
+            console.log("Start Playing song: " + song.src);
 		}
 	});
 
@@ -162,7 +177,7 @@ $(document).ready(function() {
 	// 	Cookies.set('song_state', state, {expires: 1 });
 	// });
 
-	 $('#mute').click( function(ev) {
+	 $('button[id^="mute-"]').click( function(ev) {
 		ev.preventDefault();
 
 		// Mute/Unmute the song and modify the state
