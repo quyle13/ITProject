@@ -283,29 +283,31 @@ def artist(request, artist_name):
 
 
 def album(request, artist_name, album_name):
-    comment_form = CommentForm({'author': request.user.username,
-                                'artist': artist_name,
-                                'album': album_name,
-                                'comment_page': 'album'})
+    context_dict = dict()
+    context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'artist': artist_name,
+                                                'album': album_name,
+                                                'comment_page': 'album'})
 
-    rating_form = RatingForm({'author': request.user.username,
-                              'artist': artist_name,
-                              'album': album_name,
-                              'rating_page': 'album'})
+    context_dict['rating_form'] = RatingForm({'author': request.user.username,
+                                              'artist': artist_name,
+                                              'album': album_name,
+                                              'rating_page': 'album'})
 
     try:
-        rates = Rating.objects.filter(Artist=artist_name,
-                                      Album=album_name,
-                                      Song='').order_by('-id')[:10]
-        avg_rates = rates.aggregate(Avg('RatingValue'))
+        context_dict['rates'] = Rating.objects.filter(Artist=artist_name,
+                                                      Album=album_name,
+                                                      Song='').order_by('-id')[:10]
+        context_dict['avg_rates'] = context_dict['rates'].aggregate(Avg('RatingValue'))
 
-        if avg_rates['RatingValue__avg'] is not None:
-            avg_int = int(avg_rates['RatingValue__avg'])
+        if context_dict['avg_rates']['RatingValue__avg'] is not None:
+            context_dict['avg_int'] = int(context_dict['avg_rates']['RatingValue__avg'])
 
         comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song='').order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
+        context_dict['comments'] = comment_list
     except Exception as e:
         print(e)
 
@@ -316,7 +318,12 @@ def album(request, artist_name, album_name):
     if request.user.is_authenticated:
         playlists = PlayList.objects.filter(UserID=request.user)
 
-    return render(request, 'musicapp/album.html', locals())
+    context_dict['album'] = album
+    context_dict['songs'] = songs
+    context_dict['playlists'] = playlists
+    context_dict['page_title'] = album.Title + ' by: ' + album.Artist.Name
+
+    return render(request, 'musicapp/album.html', context=context_dict)
 
 
 def comment_post(request):
