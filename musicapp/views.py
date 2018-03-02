@@ -317,10 +317,10 @@ def album(request, artist_name, album_name):
 
     if request.user.is_authenticated:
         playlists = PlayList.objects.filter(UserID=request.user)
+        context_dict['playlists'] = playlists
 
     context_dict['album'] = album
     context_dict['songs'] = songs
-    context_dict['playlists'] = playlists
     context_dict['page_title'] = album.Title + ' by: ' + album.Artist.Name
 
     return render(request, 'musicapp/album.html', context=context_dict)
