@@ -17,6 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from musicapp.helpers import *
 import requests
 
+
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
@@ -36,11 +37,11 @@ def index(request):
     for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='artist')[:5]:
         topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
-    context_dict['top_songs']    = topSongs_list
+    context_dict['top_songs'] = topSongs_list
     # context_dict['new_songs']    = newSongs_list
-    context_dict['top_albums']   = topAlbums_list
+    context_dict['top_albums'] = topAlbums_list
     # context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artists']  = topArtistes_list
+    context_dict['top_artists'] = topArtistes_list
     # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
@@ -215,7 +216,6 @@ def search(request):
 
 
 def song(request, artist_name, album_name, song_name):
-
     on_song_page = True
     page_title = song_name + ' by: ' + artist_name + ' on: ' + album_name
 
@@ -310,6 +310,7 @@ def album(request, artist_name, album_name):
         print(e)
 
     album = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
+    run_album_query(album.AlbumDeezerID, album.Artist.ArtistDeezerID)
     songs = Song.objects.filter(Album=album)
 
     if request.user.is_authenticated:
