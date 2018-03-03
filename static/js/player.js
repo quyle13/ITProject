@@ -168,15 +168,6 @@ $(document).ready(function() {
 		}
 	});
 
-	// $('#stop').click( function(ev) {
-	// 	ev.preventDefault();
-	//
-	// 	song.pause();
-	// 	song.currentTime = 0;
-	// 	state = songState.STOP;
-	// 	Cookies.set('song_state', state, {expires: 1 });
-	// });
-
 	 $('button[id^="mute-"]').click( function(ev) {
 		ev.preventDefault();
 
@@ -185,14 +176,14 @@ $(document).ready(function() {
 			song.volume = Cookies.get('volume');
 			volume = volumeState.LOUD;
 			Cookies.set('volume_state', volume, {expires: 1 });
-			$(this).html('<i class="fa fa-volume-up" title="Unmute"></i>');
+			$('button[id^="mute-"]').html('<i class="fa fa-volume-up" title="Unmute"></i>');
 		}
 		else {
 			Cookies.set('volume', song.volume, {expires: 1 });
 			song.volume = 0;
 			volume = volumeState.MUTE;
 			Cookies.set('volume_state', volume, {expires: 1 });
-			$(this).html('<i class="fa fa-volume-off" title="Mute"></i>');
+			$('button[id^="mute-"]').html('<i class="fa fa-volume-off" title="Mute"></i>');
 		}
 	});
 
@@ -219,7 +210,47 @@ $(document).ready(function() {
 		state = songState.STOP;
 		Cookies.set('song_state', state, {expires: 1 });
 
+        console.log("End of the song: " + player.getAttribute('src'));
+
 		// TODO: Get and Play next song and change player object
+
+        src = player.getAttribute('src');
+        console.log(src);
+
+        url = document.URL.substring(document.URL.search("view"));
+        url = url.split("/");
+        if(url[1] == "artist") {
+            page = "artist";
+        }
+        else if(url[1] == "album") {
+            page = "album";
+        }
+        else if(url[1] == "song") {
+            page = "song";
+        }
+        else {
+            page = "other";
+        }
+
+        $.get('/next-song/', {currentSrc: src, currentPage: page}, function(data){
+            slug =  data.split(" ")[1];
+            newSrc = data.split(" ")[0];
+
+            song.src = newSrc;
+            Cookies.set('song_src', song.src, {expires: 1 });
+            song.play();
+
+            player = $('#player-' + slug)[0];
+
+            state = songState.PLAY;
+            Cookies.set('song_state', state, {expires: 1 });
+
+            $('#header-player').html('<i class="fa fa-pause-circle" title="Pause song"></i>');
+            player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+
+            console.log("Start Playing song: " + player.getAttribute('src'));
+        });
+
 	}, false);
 
 	song.addEventListener('canplay', function() {});
