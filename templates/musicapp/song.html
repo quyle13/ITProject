@@ -3,7 +3,7 @@
 {% block content %}
     {% include 'musicapp/components/rate_modal.html' with type='Song' %}
     <div class="relative">
-        <h2>Song Title</h2>
+        <h2>{{ song.Title }}</h2>
         {% if avg_int == 5 %}
             <div id="rating">
                 <i class="glyphicon glyphicon-star"></i>
@@ -53,21 +53,17 @@
         </button>
         <hr>
     </div>
-    <div class="relative">
-        <img class="profile-photo">
+    <div class="relative"><img src="{{ song.PictureURL }}" class="profile-photo">
         <h4>Details:</h4>
         <div class="row">
             <div class="col-sm-2 col-xs-3">
                 <p>Artist:</p>
                 <p>Album:</p>
-                <p>Location:</p>
-                <p>Release Date:&nbsp;</p>
+                <p>&nbsp;</p>
             </div>
             <div class="col-sm-10 col-xs-9">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p>Paragraph</p>
-                <p>Paragraph</p>
+                <p><a href="{% url 'artist' song.Artist.ArtistSlug %}">{{ song.Artist.Name }}</a></p>
+                <p><a href="{% url 'album' song.Artist.ArtistSlug song.Album.AlbumSlug %}">{{ song.Album.Title }}</a></p>
             </div>
         </div>
         <div class="clearfix"></div>
