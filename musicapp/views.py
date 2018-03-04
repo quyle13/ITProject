@@ -235,12 +235,6 @@ def song(request, artist_name, album_name, song_name):
     album = Album.objects.filter(AlbumSlug=album_name, Artist=artist)[0]
     song = Song.objects.filter(SongSlug=song_name, Album=album, Artist=artist)[0]
 
-    print("-------------------------------------");
-    print(song_name, song);
-    print(album_name, album);
-    print(artist_name, artist);
-    print("-------------------------------------");
-
     try:
         rates = Rating.objects.filter(Artist=artist_name,
                                       Album=album_name,
@@ -389,8 +383,8 @@ def next_song(request):
         # Get the song from the database
         song = Song.objects.get(PreviewURL=src)
 
-        if(page == "album"):
-            songList = Song.objects.filter(Album=song.Album)
+        # if(page == "album" or page == "song"):
+        songList = Song.objects.filter(Album=song.Album)
 
         for i in range(len(songList)):
             if songList[i] == song and i != len(songList)-1:
@@ -398,4 +392,5 @@ def next_song(request):
             elif songList[i] == song and i == len(songList)-1:
                 nextSong = songList[0]
 
-    return HttpResponse(nextSong.PreviewURL + ' ' + nextSong.SongSlug)
+    return HttpResponse(nextSong.PreviewURL + ' ' + nextSong.SongSlug + ' ' +
+                        nextSong.Album.AlbumSlug + ' ' + nextSong.Artist.ArtistSlug)
