@@ -24,24 +24,24 @@ def index(request):
 
     # Get the songs ordred regarding the rate
     topSongs_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='song')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='song')[:5]:
         topSongs_list.extend(Song.objects.filter(SongSlug=rate.Song))
 
     # Get the albums ordred regarding the rate
     topAlbums_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='album')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='album')[:5]:
         topAlbums_list.extend(Album.objects.filter(AlbumSlug=rate.Album))
 
     # Get the artists ordred regarding the rate
     topArtistes_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='artist')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:5]:
         topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
-    context_dict['top_songs'] = topSongs_list
+    context_dict['top_songs'] = topSongs_list[:5]
     # context_dict['new_songs']    = newSongs_list
-    context_dict['top_albums'] = topAlbums_list
+    context_dict['top_albums'] = topAlbums_list[:5]
     # context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artists'] = topArtistes_list
+    context_dict['top_artists'] = topArtistes_list[:5]
     # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
@@ -174,7 +174,6 @@ def playlist(request, playlist_name):
     context_dict['page_title'] = context_dict['playlist'].Name
     context_dict['playlist_songs'] = Song.objects.filter(playlist=context_dict['playlist']).distinct()
     return render(request, 'musicapp/playlist.html', context=context_dict)
-
 
 def search(request):
     context_dict = dict()
