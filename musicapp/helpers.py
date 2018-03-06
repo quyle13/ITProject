@@ -123,8 +123,6 @@ Process search songs/albums/artist
 2. Search in local database firstly
 3. If there is no information, then call Deezer API
 '''
-
-
 def run_query(name, next_link):
     returned_result = []
 

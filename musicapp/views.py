@@ -163,7 +163,13 @@ def playlist(request, playlist_name):
     context_dict['playlist_songs'] = Song.objects.filter(playlist=context_dict['playlist']).distinct()
     return render(request, 'musicapp/playlist.html', context=context_dict)
 
+'''
+Search view: is called when user click Search button in navigation bar
+1st: Check if there is data in session
+2nd: If there is no data in session (call search function for the first time), it will call to run_query method
+3rd: Do paging function based on returned result
 
+'''
 def search(request):
     context_dict = dict()
     context_dict['page_title'] = 'Search for Songs, Albums, Artists'
