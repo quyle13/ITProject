@@ -2,7 +2,7 @@
 {% block content %}
     {% include 'musicapp/components/rate_modal.html' with type='Artist' %}
     <div class="relative">
-        <h2>Artist Name</h2>
+        <h2>{{ artist.Name }}</h2>
         {% if avg_int == 5 %}
             <div id="rating">
                 <i class="glyphicon glyphicon-star"></i>
@@ -51,18 +51,17 @@
         </button>
         <hr>
     </div>
-    <div class="relative"><img class="profile-photo">
+    <div class="relative"><img src="{{ artist.PictureURL }}" class="profile-photo">
+
         <h4>Details:</h4>
         <div class="row">
             <div class="col-sm-2 col-xs-3">
-                <p>Location:</p>
-                <p>First Release Date:&nbsp;</p>
-                <p>Genre:&nbsp;</p>
+                <p>Number of album:  </p>
+                <p>Number of fan:  </p>
             </div>
             <div class="col-sm-10 col-xs-9">
-                <p>Paragraph</p>
-                <p>Paragraph</p>
-                <p>Paragraph</p>
+                <p>{{ detail.0 }}</p>{#number of album#}
+                <p>{{ detail.1 }}</p>{#number of fan#}
             </div>
         </div>
         <div class="clearfix"></div>
@@ -70,9 +69,12 @@
     </div>
     <div class="relative">
         <h4>Albums:</h4>
-        <div class="scroll-list">
-            {% include 'musicapp/components/search_results.html' with type='album' %}
-        </div>
+
+            <div class="scroll-list" style="overflow-x:hidden; height: 250px; overflow-y: auto" >
+                 {% include 'musicapp/components/search_results.html' with type='album' %}
+            </div>
+
+
         <div class="clearfix"></div>
     </div>
     <div class="relative">

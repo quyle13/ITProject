@@ -10,6 +10,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     profile_picture = models.ImageField(null=True, upload_to='profile_pictures/')
 
+
 class Artist(models.Model):
     ArtistSlug = models.SlugField()
     Name = models.CharField(max_length=400, unique=True)
