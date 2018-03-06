@@ -1,10 +1,10 @@
-import requests
-from django.template.defaultfilters import slugify
-from musicapp.models import Artist, Album, Song
-from django.db import IntegrityError
-from django.contrib.sessions.backends.db import SessionStore
 import xml.etree.cElementTree as ET
 
+import requests
+from django.contrib.sessions.backends.db import SessionStore
+from django.template.defaultfilters import slugify
+
+from musicapp.models import Artist, Album, Song
 
 
 def save_deezer_album_songs_to_db(result, album_id, artist_id):
@@ -32,18 +32,15 @@ def save_deezer_album_songs_to_db(result, album_id, artist_id):
 def run_album_query(album_id, artist_id):
     result = None
     try:
-        print("Calling DEEZER API")
-
         result = requests.get("https://api.deezer.com/album/" + str(album_id) + "/tracks")
     except:
-        print("Error when querying DEEZER API")
+        print("Error Querying Deezer API")
 
     if result is not None and result.status_code == 200:
         temp_result = result.json()
         save_deezer_album_songs_to_db(temp_result, album_id, artist_id)
 
     return 1
-
 
 
 def save_deezer_data_to_db(input):
@@ -61,7 +58,6 @@ def save_deezer_data_to_db(input):
         artist.Name = each_object['artist']['name']
         artist.PictureURL = each_object['artist']['picture_medium']
         artist.ArtistDeezerID = each_object['artist']['id']
-
 
         try:
             artist = Artist.objects.get(Name=artist.Name)
@@ -96,19 +92,15 @@ def save_deezer_data_to_db(input):
             song.save()
             pass
 
+
 # this is save data to data base album info related to the sepecific artist
 def save_deezer_data_to_db_artist_album(input, _artist_name, _artist_deezeer_id):
-    print('in call Dezzer API METHOD')
-
     for key, value in input.items():
         if key == 'data':
             number_of_items = len(value)
-            print(key)
-            print(len(value))
 
     # iterate all objects and save to data
     for i in range(number_of_items):
-        print("start db")
         each_object = input['data'][i]
 
         album = Album()
@@ -119,7 +111,6 @@ def save_deezer_data_to_db_artist_album(input, _artist_name, _artist_deezeer_id)
         album.ArtistDeezerID = _artist_deezeer_id
         try:
             album = Album.objects.get(Title=album.Title)
-            print("saved db")
         except Album.DoesNotExist:
             album.save()
 
@@ -134,13 +125,12 @@ Process search songs/albums/artist
 '''
 
 
-def run_query(name,next_link):
+def run_query(name, next_link):
     returned_result = []
 
     # Firstly, check our database
     artist_list = Artist.objects.filter(Name__icontains=name)
     if artist_list.exists():
-        print('There is Artist info in DB')
         for each_artist in artist_list:
             returned_result.append({'name': each_artist.Name,
                                     'ArtistSlug': each_artist.ArtistSlug,
@@ -151,7 +141,6 @@ def run_query(name,next_link):
 
     song_list = Song.objects.filter(Title__icontains=name)
     if song_list.exists():
-        print('There is song info in DB')
         for each_song in song_list:
             returned_result.append({'title': each_song.Title,
                                     'ArtistSlug': each_song.Artist.ArtistSlug,
@@ -162,7 +151,6 @@ def run_query(name,next_link):
 
     album_list = Album.objects.filter(Title__icontains=name)
     if album_list.exists():
-        print('There is album info in DB')
         for each_album in album_list:
             returned_result.append({'title': each_album.Title,
                                     'ArtistSlug': each_album.Artist.ArtistSlug,
@@ -173,10 +161,8 @@ def run_query(name,next_link):
     # call deezer api
     result = None
     try:
-        print("Calling DEEZER API")
-        #check next link exists or not
+        # check next link exists or not
         if not next_link:
-            print('next link is None')
             result = requests.get("https://api.deezer.com/search" + "?", params={'q': name})
         else:
 
@@ -190,7 +176,6 @@ def run_query(name,next_link):
         save_deezer_data_to_db(temp_result)
         s = SessionStore()
         if 'next' in temp_result.keys():
-            print("There is next link")
             next_link = temp_result['next']
             s["next_link"] = next_link
             s.save()
@@ -236,12 +221,9 @@ def run_query(name,next_link):
 def run_query_artist(_artist_name):
     # query for related album
     # Firstly, check our database
-    print("start")
     returned_result = []
     album_list = Album.objects.filter(Artist__Name__icontains=_artist_name)
-    print(album_list)
     if album_list.exists():
-        print('There is album info in DB')
         for each_album in album_list:
             returned_result.append({'title': each_album.Title,
                                     'ArtistSlug': each_album.Artist.ArtistSlug,
@@ -252,22 +234,18 @@ def run_query_artist(_artist_name):
     # call deezer api
     singer_name = Artist.objects.get(ArtistSlug=_artist_name)
     artist_deezeer_id = str(singer_name.ArtistDeezerID)
-    print(artist_deezeer_id)
     result = requests.get("https://api.deezer.com/artist/" + artist_deezeer_id + "/albums")
-    print(result)
 
     # Check if the HTTP response is OK
     if result is not None:
         temp_result = result.json()
         save_deezer_data_to_db_artist_album(temp_result, singer_name, artist_deezeer_id)
-        if 'next' in temp_result.keys(): # if the result has "next"
+        if 'next' in temp_result.keys():  # if the result has "next"
             next_link = temp_result['next']
             result = requests.get(next_link)
             temp_result = result.json()
             save_deezer_data_to_db_artist_album(temp_result, singer_name, artist_deezeer_id)
-            print("processed1")
             for each_item in temp_result['data']:
-                print(each_item['title'])
                 if not any(d['AlbumSlug'] == slugify(each_item['title']) for d in returned_result):
                     returned_result.append({'title': each_item['title'],
                                             'ArtistSlug': slugify(_artist_name),
@@ -276,7 +254,7 @@ def run_query_artist(_artist_name):
                                             'PictureURL': each_item['cover_medium'],
                                             'type': 'album'})
 
-        else:# With the result has not "next"
+        else:  # With the result has not "next"
 
             for each_item in temp_result['data']:
                 if not any(d['AlbumSlug'] == slugify(each_item['title']) for d in returned_result):
@@ -286,13 +264,10 @@ def run_query_artist(_artist_name):
                                             'SongSlug': '',
                                             'PictureURL': each_item['cover_medium'],
                                             'type': 'album'})
-    print("processed2")
-    print(returned_result)
     return returned_result
 
 
 def detail_artist(_artist_name):
-
     singer_name = Artist.objects.get(ArtistSlug=_artist_name)
     artist_deezeer_id = str(singer_name.ArtistDeezerID)
     detail = requests.get("https://api.deezer.com/artist/" + artist_deezeer_id)
@@ -314,10 +289,6 @@ def detail_song(_song_name, _artist_name):
 
     lyric = requests.get("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
                          replace_name + "&song=" + replace_song_name)
-
-    # print("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
-    #       replace_name + "&song=" + replace_song_name)
-    # print(lyric.content)
 
     root = ET.fromstring(lyric.content)
     for child in root.iter('{http://api.chartlyrics.com/}Lyric'):

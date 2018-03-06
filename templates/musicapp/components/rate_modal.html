@@ -9,14 +9,14 @@
             </div>
             {% csrf_token %}
             {% if user.is_authenticated %}
-                    <form id="rate" action="{% url 'rating_post' %}" method="post">
-                        {% csrf_token %}
-                        {{ rating_form.author }}
-                        {{ rating_form.artist }}
-                        {{ rating_form.album }}
-                        {{ rating_form.song }}
-                        {{ rating_form.rating_page }}
-                        <div class="modal-body">
+                <form id="rate" action="{% url 'rating_post' %}" method="post">
+                    {% csrf_token %}
+                    {{ rating_form.author }}
+                    {{ rating_form.artist }}
+                    {{ rating_form.album }}
+                    {{ rating_form.song }}
+                    {{ rating_form.rating_page }}
+                    <div class="modal-body">
                         <div class="form-group">
                             <label class="control-label">Rating 0-5</label>
                             <select class="form-control"
@@ -31,28 +31,28 @@
                                 <option value="5">Five Star</option>
                             </select>
                         </div>
-                </div>
-                        {{ error_msg }}
-            <div class="modal-footer">
-                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
-                <button class="btn btn-primary" type="submit">Save</button>
-            </div>
-                    </form>
-{#                <script type="text/javascript">#}
-{#                    $(document).on('submit', '#rate', function (e) {#}
-{#                        e.preventDefault();#}
-{#                        $.ajax({#}
-{#                            type:'POST',#}
-{#                            url:'/components/rate_modal/',#}
-{#                            data:{#}
+                    </div>
+                    {{ error_msg }}
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+                {#                <script type="text/javascript">#}
+                {#                    $(document).on('submit', '#rate', function (e) {#}
+                {#                        e.preventDefault();#}
+                {#                        $.ajax({#}
+                {#                            type:'POST',#}
+                {#                            url:'/components/rate_modal/',#}
+                {#                            data:{#}
 
-{#                            }#}
-{#                        });#}
-{#                        #}
-{#                    })#}
-{#                </script>#}
+                {#                            }#}
+                {#                        });#}
+                {#                        #}
+                {#                    })#}
+                {#                </script>#}
             {% else %}
-                 <div class="modal-footer">
+                <div class="modal-footer">
                     You should login for rating
                     <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
 
