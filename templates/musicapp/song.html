@@ -79,10 +79,9 @@
                 <div class="col-sm-8">
                     {% include 'musicapp/components/play_song.html' %}
                 </div>
-                <div class="col-sm-4 hidden-xs" id="lyrics">
+                <div class="col-sm-4 hidden-xs" id="lyrics" >
                     <h5>Lyrics:</h5>
-                    <hr>
-                    <p>{{ detail.2 }}</p> {#lyrics#}
+                    <pre style="height: 300px; width: 400px">{{ detail.2 }} {#lyrics#}</pre>
                 </div>
             </div>
         </div>
