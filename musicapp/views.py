@@ -236,8 +236,6 @@ def song(request, artist_name, album_name, song_name):
                                               'rating_page': 'song'})
 
     context_dict['detail'] = detail_song(song_name, artist_name)
-    print(context_dict['detail'])
-
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
