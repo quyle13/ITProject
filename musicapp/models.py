@@ -1,7 +1,5 @@
-from django.db import models
-
-from django import forms
 from django.contrib.auth.models import User
+from django.db import models
 from django.template.defaultfilters import slugify
 
 
@@ -69,6 +67,7 @@ class Song(models.Model):
 
 class Comment(models.Model):
     Username = models.CharField(max_length=50)
+    UserImage = models.CharField(max_length=300)
     Content = models.TextField(max_length=1000)
     Artist = models.CharField(max_length=400)
     Album = models.CharField(max_length=400)
