@@ -2,6 +2,8 @@ import requests
 from django.template.defaultfilters import slugify
 from musicapp.models import Artist, Album, Song
 from django.db import IntegrityError
+from django.contrib.sessions.backends.db import SessionStore
+
 
 
 def save_deezer_album_songs_to_db(result, album_id, artist_id):
@@ -30,6 +32,7 @@ def run_album_query(album_id, artist_id):
     result = None
     try:
         print("Calling DEEZER API")
+
         result = requests.get("https://api.deezer.com/album/" + str(album_id) + "/tracks")
     except:
         print("Error when querying DEEZER API")
@@ -99,7 +102,7 @@ Process search songs/albums/artist
 '''
 
 
-def run_query(name=""):
+def run_query(name,next_link):
     returned_result = []
 
     # Firstly, check our database
@@ -139,7 +142,13 @@ def run_query(name=""):
     result = None
     try:
         print("Calling DEEZER API")
-        result = requests.get("https://api.deezer.com/search" + "?", params={'q': name})
+        #check next link exists or not
+        if not next_link:
+            print('next link is None')
+            result = requests.get("https://api.deezer.com/search" + "?", params={'q': name})
+        else:
+
+            result = requests.get(next_link)
     except:
         print("Error when querying DEEZER API")
 
@@ -147,35 +156,41 @@ def run_query(name=""):
     if result is not None and result.status_code == 200:
         temp_result = result.json()
         save_deezer_data_to_db(temp_result)
-        while 'next' in temp_result.keys():
+        s = SessionStore()
+        if 'next' in temp_result.keys():
+            print("There is next link")
             next_link = temp_result['next']
-            result = requests.get(next_link)
-            temp_result = result.json()
-            save_deezer_data_to_db(temp_result)
-            for each_item in temp_result['data']:
-                if each_item['artist']:
-                    if not any(d['ArtistSlug'] == slugify(each_item['artist']['name']) for d in returned_result):
-                        returned_result.append({'name': each_item['artist']['name'],
-                                                'ArtistSlug': slugify(each_item['artist']['name']),
-                                                'AlbumSlug': '',
-                                                'SongSlug': '',
-                                                'PictureURL': each_item['artist']['picture_medium'],
-                                                'type': 'artist'})
-                if each_item['album']:
-                    if not any(d['AlbumSlug'] == slugify(each_item['album']['title']) for d in returned_result):
-                        returned_result.append({'title': each_item['album']['title'],
-                                                'ArtistSlug': slugify(each_item['artist']['name']),
-                                                'AlbumSlug': slugify(each_item['album']['title']),
-                                                'SongSlug': '',
-                                                'PictureURL': each_item['album']['cover_medium'],
-                                                'type': 'album'})
-                if not any(d['ArtistSlug'] == slugify(each_item['title']) for d in returned_result):
-                    returned_result.append({'title': each_item['title'],
+            s["next_link"] = next_link
+            s.save()
+        else:
+            del s['next_link']
+            # result = requests.get(next_link)
+            # temp_result = result.json()
+            # save_deezer_data_to_db(temp_result)
+        for each_item in temp_result['data']:
+            if each_item['artist']:
+                if not any(d['ArtistSlug'] == slugify(each_item['artist']['name']) for d in returned_result):
+                    returned_result.append({'name': each_item['artist']['name'],
+                                            'ArtistSlug': slugify(each_item['artist']['name']),
+                                            'AlbumSlug': '',
+                                            'SongSlug': '',
+                                            'PictureURL': each_item['artist']['picture_medium'],
+                                            'type': 'artist'})
+            if each_item['album']:
+                if not any(d['AlbumSlug'] == slugify(each_item['album']['title']) for d in returned_result):
+                    returned_result.append({'title': each_item['album']['title'],
                                             'ArtistSlug': slugify(each_item['artist']['name']),
                                             'AlbumSlug': slugify(each_item['album']['title']),
-                                            'SongSlug': slugify(each_item['title']),
+                                            'SongSlug': '',
                                             'PictureURL': each_item['album']['cover_medium'],
-                                            'type': 'song'})
+                                            'type': 'album'})
+            if not any(d['ArtistSlug'] == slugify(each_item['title']) for d in returned_result):
+                returned_result.append({'title': each_item['title'],
+                                        'ArtistSlug': slugify(each_item['artist']['name']),
+                                        'AlbumSlug': slugify(each_item['album']['title']),
+                                        'SongSlug': slugify(each_item['title']),
+                                        'PictureURL': each_item['album']['cover_medium'],
+                                        'type': 'song'})
 
         return {'returned_result': returned_result}
 

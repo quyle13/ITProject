@@ -197,7 +197,10 @@ def search(request):
         if 'returned_list' in request.session:
             returned_list = request.session.get('returned_list')
         else:
-            returned_list = run_query(name=keyword)
+            next_link =''
+            if 'next_link' in request.session:
+                next_link = request.session.get('next_link')
+            returned_list = run_query(keyword,next_link)
             request.session['returned_list'] = returned_list
 
         paginator = Paginator(returned_list['returned_result'], 24)
