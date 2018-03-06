@@ -1,6 +1,6 @@
 {% extends 'musicapp/base.html' %}
 {% block content %}
-    <div class="login-dark">
+    <div class="form-dark">
         <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <h2>Register</h2>

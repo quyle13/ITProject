@@ -1,6 +1,6 @@
 {% extends 'musicapp/base.html' %}
 {% block content %}
-    <div class="login-dark">
+    <div class="form-dark">
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
             <h2>Login</h2>

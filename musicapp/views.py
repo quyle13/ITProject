@@ -215,6 +215,7 @@ def song(request, artist_name, album_name, song_name):
     context_dict['page_title'] = song_name + ' by: ' + artist_name + ' on: ' + album_name
     context_dict['song_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'image': request.user.userprofile.profile_picture,
                                                 'artist': artist_name,
                                                 'album': album_name,
                                                 'song': song_name,
@@ -227,9 +228,6 @@ def song(request, artist_name, album_name, song_name):
                                               'rating_page': 'song'})
 
     context_dict['detail'] = detail_song(song_name, artist_name)
-    artist = Artist.objects.filter(ArtistSlug=artist_name)[0]
-    album = Album.objects.filter(AlbumSlug=album_name, Artist=artist)[0]
-    song = Song.objects.filter(SongSlug=song_name, Album=album, Artist=artist)[0]
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
@@ -259,9 +257,9 @@ def song(request, artist_name, album_name, song_name):
 
 def artist(request, artist_name):
     context_dict = dict()
-    context_dict['page_title'] = artist_name
     context_dict['artist_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'image': request.user.userprofile.profile_picture.__str__(),
                                                 'artist': artist_name,
                                                 'comment_page': 'artist'})
 
@@ -293,14 +291,15 @@ def artist(request, artist_name):
         pass
 
     context_dict['artist'] = Artist.objects.get(ArtistSlug=artist_name)
+    context_dict['page_title'] = context_dict['artist'].Name
     return render(request, 'musicapp/artist.html', context=context_dict)
 
 
 def album(request, artist_name, album_name):
     context_dict = dict()
-    context_dict['page_title'] = artist_name + ' on: ' + album_name
     context_dict['album_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'image': request.user.userprofile.profile_picture,
                                                 'artist': artist_name,
                                                 'album': album_name,
                                                 'comment_page': 'album'})
@@ -330,6 +329,7 @@ def album(request, artist_name, album_name):
     context_dict['album'] = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
     run_album_query(context_dict['album'].AlbumDeezerID, context_dict['album'].Artist.ArtistDeezerID)
     context_dict['songs'] = Song.objects.filter(Album=context_dict['album'])
+    context_dict['page_title'] = context_dict['album'].Title + ' by: ' + context_dict['album'].Artist.Name
 
     if request.user.is_authenticated:
         context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)

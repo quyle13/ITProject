@@ -1,10 +1,8 @@
 <div class="row comment">
     {% for comment in comment_list %}
-        <div class="col-xs-1">
-            <img>{{ comment.Username }}
-        </div>
-        <div class="col-xs-11">
-            <p>{{ comment.Content }}</p>
+        <div>
+            @{{ comment.Username }} says:
+            {{ comment.Content }}
         </div>
         <div class="clearfix"></div>
     {% endfor %}
