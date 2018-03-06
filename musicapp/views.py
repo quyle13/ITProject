@@ -70,9 +70,6 @@ def register(request):
             user.save()
             auth_login(request, user)
             return HttpResponseRedirect(reverse('home'))
-        else:
-            print(user_form.errors)
-
     else:
         user_form = UserForm()
     return render(request, 'musicapp/register.html', context=context_dict)
@@ -152,10 +149,6 @@ def profile(request):
             p.save()
             context_dict['notification_success'] = True
             context_dict['notification_message'] = 'New playlist added'
-        else:
-            print(user_edit_form.errors)
-            print(add_playlist_form.errors)
-
     else:
         user_edit_form = UserEditForm(user=request.user)
         add_playlist_form = PlaylistForm()
@@ -177,7 +170,6 @@ def search(request):
     context_dict['search_active'] = True
 
     page = request.GET.get('page')
-    print(page)
     # Clear all previous data for the first running
     if page is None:
         if 'keyword' in request.session:
@@ -186,9 +178,6 @@ def search(request):
             del request.session['returned_list']
 
     keyword = request.GET.get('searchValue')
-    print(keyword)
-    # TODO:Ask Tutor about how to get submited value when user navigate beween pages
-    # Temporarily process
     if keyword is None and page is not None:
         keyword = request.session.get('keyword')
     if keyword is not None:
@@ -232,8 +221,6 @@ def song(request, artist_name, album_name, song_name):
                                               'rating_page': 'song'})
 
     context_dict['detail'] = detail_song(song_name, artist_name)
-    print(context_dict['detail'])
-
     artist = Artist.objects.filter(ArtistSlug=artist_name)[0]
     album = Album.objects.filter(AlbumSlug=album_name, Artist=artist)[0]
     song = Song.objects.filter(SongSlug=song_name, Album=album, Artist=artist)[0]
@@ -257,7 +244,7 @@ def song(request, artist_name, album_name, song_name):
         context_dict['comment_list'] = comment_list
 
     except Exception as e:
-        print(e)
+        pass
 
     context_dict['song'] = Song.objects.get(SongSlug=song_name)
 
@@ -278,8 +265,6 @@ def artist(request, artist_name):
 
     context_dict['detail'] = detail_artist(artist_name)
     context_dict['returned_list'] = run_query_artist(artist_name)
-    print("this is context")
-    print(context_dict)
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
@@ -299,7 +284,7 @@ def artist(request, artist_name):
 
         context_dict['comment_list'] = comment_list
     except Exception as e:
-        print(e)
+        pass
 
     context_dict['artist'] = Artist.objects.get(ArtistSlug=artist_name)
     return render(request, 'musicapp/artist.html', context=context_dict)
@@ -334,7 +319,7 @@ def album(request, artist_name, album_name):
         context_dict['comment_list'] = comment_list
 
     except Exception as e:
-        print(e)
+        pass
 
     context_dict['album'] = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
     run_album_query(context_dict['album'].AlbumDeezerID, context_dict['album'].Artist.ArtistDeezerID)
