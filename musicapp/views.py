@@ -1,22 +1,16 @@
-from django.shortcuts import render
 from django.contrib.auth import authenticate, login as auth_login, logout
-from musicapp.models import UserProfile
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.core.urlresolvers import reverse
-from musicapp.forms import UserForm, CommentForm, RatingForm, PlaylistForm
-from .models import *
-from django.db.models import Avg
-from musicapp.forms import UserForm, UserEditForm
 from django.core.files.storage import FileSystemStorage
-from musicapp.models import Artist, Album, Song
-from django.shortcuts import render, render_to_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.db.models import Avg
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+
+from musicapp.forms import CommentForm, RatingForm, PlaylistForm
+from musicapp.forms import UserForm, UserEditForm
 from musicapp.helpers import *
-import re
-import requests
+from .models import *
 
 
 def index(request):

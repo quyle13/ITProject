@@ -1,26 +1,26 @@
 {% extends 'musicapp/base.html' %}
 
 {% block content %}
-<div class="relative">
-    <h2>{{ playlist.Name }}</h2>
-    <hr>
-</div>
-<div class="relative">
-    <h4>Songs:</h4>
-    <div id="tracks">
-        <div class="row">
-            <div class="col-sm-8">
-                {% for song in playlist_songs %}
-                    {% include 'musicapp/components/play_song.html' with song=song %}
-                {% endfor %}
-            </div>
-            <div class="col-sm-4 hidden-xs" id="lyrics">
-                <h5>Lyrics:</h5>
-                <hr>
-                <p>Lyrics for playing song here</p>
+    <div class="relative">
+        <h2>{{ playlist.Name }}</h2>
+        <hr>
+    </div>
+    <div class="relative">
+        <h4>Songs:</h4>
+        <div id="tracks">
+            <div class="row">
+                <div class="col-sm-8">
+                    {% for song in playlist_songs %}
+                        {% include 'musicapp/components/play_song.html' with song=song %}
+                    {% endfor %}
+                </div>
+                <div class="col-sm-4 hidden-xs" id="lyrics">
+                    <h5>Lyrics:</h5>
+                    <hr>
+                    <p>Lyrics for playing song here</p>
+                </div>
             </div>
         </div>
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
-</div>
 {% endblock %}

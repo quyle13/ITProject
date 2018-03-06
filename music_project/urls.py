@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from django.contrib import admin
-from musicapp import views
-from musicapp import ajax_views
-from music_project import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+
+from music_project import settings
+from musicapp import ajax_views
+from musicapp import views
 
 urlpatterns = [
     url(r'^$', views.index, name='home'),
@@ -41,7 +42,6 @@ urlpatterns = [
 
     # internal ajax views
     url(r'^ajax/add-to-playlist/(?P<ids>[\w\-]+)$', ajax_views.add_to_playlist),
-
     url(r'^next-song/$', views.next_song, name='next-song'),
 ]
 

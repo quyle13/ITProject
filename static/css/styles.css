@@ -680,6 +680,7 @@ div.card:after {
     text-align: center;
     display: block;
 }
+
 .error {
     color: red;
     text-align: center;
@@ -696,19 +697,22 @@ div.card:after {
     z-index: 999;
 }
 
-.notification h4{
+.notification h4 {
     color: #FFFFFF;
 }
 
 .notification.error {
     background: #9e0000;
 }
+
 .notification.warning {
     background: #ffff00;
 }
-.notification.warning h4{
+
+.notification.warning h4 {
     color: #000000;
 }
-.notification.success{
+
+.notification.success {
     background: #0a9e00;
 }

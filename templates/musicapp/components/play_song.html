@@ -9,7 +9,8 @@
         {% endif %}
     </div>
     <div class="col-xs-3">
-        <button class="btn btn-default control" id="player-{{ song.SongSlug }}" type="button" src="{{ song.PreviewURL }}">
+        <button class="btn btn-default control" id="player-{{ song.SongSlug }}" type="button"
+                src="{{ song.PreviewURL }}">
             <i class="fa fa-play-circle-o" title="Play song"></i>
 
             <!-- The type of the button is changed by the script player.js:
@@ -34,7 +35,7 @@
                 <ul class="dropdown-menu" role="menu">
                     {% for playlist in playlists %}
                         <li role="presentation" aria-label="{{ song.Name }}">
-                            <a class="add-to-playlist" aria-label="{{ playlist.id}}-{{ song.id }}">
+                            <a class="add-to-playlist" aria-label="{{ playlist.id }}-{{ song.id }}">
                                 {{ playlist.Name }}
                             </a>
                         </li>
