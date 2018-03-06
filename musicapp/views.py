@@ -17,7 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from musicapp.helpers import *
 import re
 import requests
-import xml.etree.cElementTree as ET
+
 
 
 def index(request):
@@ -235,7 +235,9 @@ def song(request, artist_name, album_name, song_name):
                                               'song': song_name,
                                               'rating_page': 'song'})
 
-    context_dict['detail'] = detail_song(song_name)
+    context_dict['detail'] = detail_song(song_name, artist_name)
+    print(context_dict['detail'])
+
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,

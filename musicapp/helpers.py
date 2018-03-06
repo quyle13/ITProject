@@ -2,6 +2,7 @@ import requests
 from django.template.defaultfilters import slugify
 from musicapp.models import Artist, Album, Song
 from django.db import IntegrityError
+import xml.etree.cElementTree as ET
 
 
 def save_deezer_data_to_db(input):
@@ -251,11 +252,29 @@ def detail_artist(_artist_name):
     return detail_dic['nb_album'], detail_dic['nb_fan']
 
 
-def detail_song(_song_name):
+def detail_song(_song_name, _artist_name):
     song_name = Song.objects.get(SongSlug=_song_name)
     song_deezeer_id = str(song_name.SongDeezerID)
     detail = requests.get("https://api.deezer.com/track/" + song_deezeer_id)
     detail_dic = detail.json()
 
+    replace_name = str(_artist_name)
+    replace_name = replace_name.replace('-', '%20')
+    replace_song_name = str(_song_name)
+    replace_song_name = replace_song_name.replace('-', '%20')
 
-    return detail_dic['rank'], detail_dic['release_date']
+    lyric = requests.get("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
+                         replace_name + "&song=" + replace_song_name)
+
+    # print("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
+    #       replace_name + "&song=" + replace_song_name)
+    # print(lyric.content)
+
+    root = ET.fromstring(lyric.content)
+    for child in root.iter('{http://api.chartlyrics.com/}Lyric'):
+        print(child.text)
+        lyric_text = child.text
+
+    detail_dic['lyric'] = lyric_text
+
+    return detail_dic['rank'], detail_dic['release_date'], detail_dic['lyric']
