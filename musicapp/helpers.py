@@ -5,9 +5,46 @@ from django.db import IntegrityError
 import xml.etree.cElementTree as ET
 
 
+def save_deezer_album_songs_to_db(result, album_id, artist_id):
+    for data in result['data']:
+        album = Album.objects.get(AlbumDeezerID__exact=album_id)
+        artist = Artist.objects.get(ArtistDeezerID__exact=artist_id)
+
+        song = Song()
+        song.Album = album
+        song.Artist = artist
+        song.Title = data['title']
+        song.PictureURL = album.PictureURL
+        song.PreviewURL = data['preview']
+        song.AlbumDeezerID = album.AlbumDeezerID
+        song.ArtistDeezerID = artist.ArtistDeezerID
+        song.SongDeezerID = data['id']
+        try:
+            song = Song.objects.get(Title=song.Title)
+        except Song.DoesNotExist:
+            song.save()
+            pass
+    pass
+
+
+def run_album_query(album_id, artist_id):
+    result = None
+    try:
+        print("Calling DEEZER API")
+        result = requests.get("https://api.deezer.com/album/" + str(album_id) + "/tracks")
+    except:
+        print("Error when querying DEEZER API")
+
+    if result is not None and result.status_code == 200:
+        temp_result = result.json()
+        save_deezer_album_songs_to_db(temp_result, album_id, artist_id)
+
+    return 1
+
+
+
 def save_deezer_data_to_db(input):
     # "https://api.deezer.com/search" + "?", params = {'q': name}
-    print('in call Dezzer API METHOD')
 
     for key, value in input.items():
         if key == 'data':

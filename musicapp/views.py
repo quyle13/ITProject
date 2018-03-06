@@ -19,7 +19,6 @@ import re
 import requests
 
 
-
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
@@ -39,11 +38,11 @@ def index(request):
     for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='artist')[:5]:
         topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
-    context_dict['top_songs']    = topSongs_list
+    context_dict['top_songs'] = topSongs_list
     # context_dict['new_songs']    = newSongs_list
-    context_dict['top_albums']   = topAlbums_list
+    context_dict['top_albums'] = topAlbums_list
     # context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artists']  = topArtistes_list
+    context_dict['top_artists'] = topArtistes_list
     # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
@@ -303,7 +302,6 @@ def artist(request, artist_name):
         print(e)
 
     context_dict['artist'] = Artist.objects.get(ArtistSlug=artist_name)
-
     return render(request, 'musicapp/artist.html', context=context_dict)
 
 
@@ -333,14 +331,14 @@ def album(request, artist_name, album_name):
         comment_list = []
         for com in comments:
             comment_list.append(com)
-
         context_dict['comment_list'] = comment_list
 
     except Exception as e:
         print(e)
 
     context_dict['album'] = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
-
+    run_album_query(context_dict['album'].AlbumDeezerID, context_dict['album'].Artist.ArtistDeezerID)
+    context_dict['songs'] = Song.objects.filter(Album=context_dict['album'])
 
     if request.user.is_authenticated:
         context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
