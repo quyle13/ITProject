@@ -19,31 +19,30 @@ import re
 import requests
 
 
-
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
 
     # Get the songs ordred regarding the rate
     topSongs_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='song')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='song')[:5]:
         topSongs_list.extend(Song.objects.filter(SongSlug=rate.Song))
 
     # Get the albums ordred regarding the rate
     topAlbums_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='album')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='album')[:5]:
         topAlbums_list.extend(Album.objects.filter(AlbumSlug=rate.Album))
 
     # Get the artists ordred regarding the rate
     topArtistes_list = []
-    for rate in Rating.objects.order_by('-RatingValue').filter(Rating_page='artist')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:5]:
         topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
-    context_dict['top_songs']    = topSongs_list
+    context_dict['top_songs'] = topSongs_list[:5]
     # context_dict['new_songs']    = newSongs_list
-    context_dict['top_albums']   = topAlbums_list
+    context_dict['top_albums'] = topAlbums_list[:5]
     # context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artists']  = topArtistes_list
+    context_dict['top_artists'] = topArtistes_list[:5]
     # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
@@ -202,7 +201,10 @@ def search(request):
         if 'returned_list' in request.session:
             returned_list = request.session.get('returned_list')
         else:
-            returned_list = run_query(name=keyword)
+            next_link = ''
+            if 'next_link' in request.session:
+                next_link = request.session.get('next_link')
+            returned_list = run_query(keyword, next_link)
             request.session['returned_list'] = returned_list
 
         paginator = Paginator(returned_list['returned_result'], 24)
@@ -236,6 +238,11 @@ def song(request, artist_name, album_name, song_name):
                                               'rating_page': 'song'})
 
     context_dict['detail'] = detail_song(song_name, artist_name)
+    print(context_dict['detail'])
+
+    artist = Artist.objects.filter(ArtistSlug=artist_name)[0]
+    album = Album.objects.filter(AlbumSlug=album_name, Artist=artist)[0]
+    song = Song.objects.filter(SongSlug=song_name, Album=album, Artist=artist)[0]
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
@@ -268,11 +275,11 @@ def artist(request, artist_name):
     context_dict['page_title'] = artist_name
     context_dict['artist_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
-                                               'artist': artist_name,
+                                                'artist': artist_name,
                                                 'comment_page': 'artist'})
 
     context_dict['rating_form'] = RatingForm({'author': request.user.username,
-                                             'artist': artist_name,
+                                              'artist': artist_name,
                                               'rating_page': 'artist'})
 
     context_dict['detail'] = detail_artist(artist_name)
@@ -301,7 +308,6 @@ def artist(request, artist_name):
         print(e)
 
     context_dict['artist'] = Artist.objects.get(ArtistSlug=artist_name)
-
     return render(request, 'musicapp/artist.html', context=context_dict)
 
 
@@ -331,14 +337,14 @@ def album(request, artist_name, album_name):
         comment_list = []
         for com in comments:
             comment_list.append(com)
-
         context_dict['comment_list'] = comment_list
 
     except Exception as e:
         print(e)
 
     context_dict['album'] = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
-
+    run_album_query(context_dict['album'].AlbumDeezerID, context_dict['album'].Artist.ArtistDeezerID)
+    context_dict['songs'] = Song.objects.filter(Album=context_dict['album'])
 
     if request.user.is_authenticated:
         context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
@@ -387,3 +393,26 @@ def rating_post(request):
     else:
         return HttpResponseRedirect(
             '/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
+
+
+def next_song(request):
+    if request.method == 'GET':
+
+        # Get the parameter given with the request
+        src = request.GET['currentSrc']
+        page = request.GET['currentPage']
+
+        # Get the song from the database
+        song = Song.objects.get(PreviewURL=src)
+
+        # if(page == "album" or page == "song"):
+        songList = Song.objects.filter(Album=song.Album)
+
+        for i in range(len(songList)):
+            if songList[i] == song and i != len(songList) - 1:
+                nextSong = songList[i + 1]
+            elif songList[i] == song and i == len(songList) - 1:
+                nextSong = songList[0]
+
+    return HttpResponse(nextSong.PreviewURL + ' ' + nextSong.SongSlug + ' ' +
+                        nextSong.Album.AlbumSlug + ' ' + nextSong.Artist.ArtistSlug)

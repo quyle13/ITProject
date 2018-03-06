@@ -41,6 +41,8 @@ urlpatterns = [
 
     # internal ajax views
     url(r'^ajax/add-to-playlist/(?P<ids>[\w\-]+)$', ajax_views.add_to_playlist),
+
+    url(r'^next-song/$', views.next_song, name='next-song'),
 ]
 
 if settings.DEBUG:

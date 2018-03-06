@@ -40,9 +40,11 @@ var updateData = function()
 
 	if(typeof Cookies.get('volume') !== 'undefined' && volume != volumeState.MUTE) {
 		song.volume = Cookies.get('volume');
+        $('button[id^="mute-"]').html('<i class="fa fa-volume-up" title="Unmute"></i>');
 	}
 	else if(volume == volumeState.MUTE) {
 		song.volume = 0;
+        $('button[id^="mute-"]').html('<i class="fa fa-volume-off" title="Mute"></i>');
 	}
 
 	if( typeof Cookies.get('song_time') !== 'undefined') {
@@ -168,15 +170,6 @@ $(document).ready(function() {
 		}
 	});
 
-	// $('#stop').click( function(ev) {
-	// 	ev.preventDefault();
-	//
-	// 	song.pause();
-	// 	song.currentTime = 0;
-	// 	state = songState.STOP;
-	// 	Cookies.set('song_state', state, {expires: 1 });
-	// });
-
 	 $('button[id^="mute-"]').click( function(ev) {
 		ev.preventDefault();
 
@@ -185,14 +178,14 @@ $(document).ready(function() {
 			song.volume = Cookies.get('volume');
 			volume = volumeState.LOUD;
 			Cookies.set('volume_state', volume, {expires: 1 });
-			$(this).html('<i class="fa fa-volume-up" title="Unmute"></i>');
+			$('button[id^="mute-"]').html('<i class="fa fa-volume-up" title="Unmute"></i>');
 		}
 		else {
 			Cookies.set('volume', song.volume, {expires: 1 });
 			song.volume = 0;
 			volume = volumeState.MUTE;
 			Cookies.set('volume_state', volume, {expires: 1 });
-			$(this).html('<i class="fa fa-volume-off" title="Mute"></i>');
+			$('button[id^="mute-"]').html('<i class="fa fa-volume-off" title="Mute"></i>');
 		}
 	});
 
@@ -207,19 +200,73 @@ $(document).ready(function() {
 	// Called when the song's time has changed
 	song.addEventListener('timeupdate', function () {
 		Cookies.set('song_time', song.currentTime, {expires: 1 });
+
 		// $('#timeBar').attr('max',song.duration);
 		// $("#timeBar").attr('value', parseInt(song.currentTime, 10));
 	});
 
 	// Called when the song has ended
 	song.addEventListener('ended', function() {
+
+        url = document.URL.substring(document.URL.search("view"));
+        url = url.split("/");
+        if(url[1] == "artist") {
+            page = "artist";
+        }
+        else if(url[1] == "album") {
+            page = "album";
+        }
+        else if(url[1] == "song") {
+            page = "song";
+        }
+        else {
+            page = "other";
+        }
+
 		$('#header-player').html('<i class="fa fa-play-circle-o" title="Play song"></i>');
-		player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
 
 		state = songState.STOP;
 		Cookies.set('song_state', state, {expires: 1 });
 
-		// TODO: Get and Play next song and change player object
+        if(page != "other") {
+            player.innerHTML = '<i class="fa fa-play-circle-o" title="Play song"></i>';
+            src = player.getAttribute('src');
+            console.log("End of the song: " + player.getAttribute('src'));
+        }
+        else {
+            src = song.src
+            console.log("End of the song");
+        }
+
+        $.get('/next-song/', {currentSrc: src, currentPage: page}, function(data){
+
+            newSrc     = data.split(" ")[0];
+            songSlug   = data.split(" ")[1];
+            albumSlug  = data.split(" ")[2];
+            artistSlug = data.split(" ")[3];
+
+            song.src = newSrc;
+            Cookies.set('song_src', song.src, {expires: 1 });
+            song.play();
+
+            state = songState.PLAY;
+            Cookies.set('song_state', state, {expires: 1 });
+
+            $('#header-player').html('<i class="fa fa-pause-circle" title="Pause song"></i>');
+
+            // If a song page is displayed, load the next song web page
+            if(page == "song") {
+                url = document.URL.split("song")[0] + 'song/' + artistSlug +
+                                         '/' + albumSlug + '/' + songSlug + '/';
+                window.location.href = url;
+            }
+            else if(page != "other") {
+                player = $('#player-' + songSlug)[0];
+                player.innerHTML = '<i class="fa fa-pause-circle" title="Pause song"></i>';
+                console.log("Start Playing song: " + player.getAttribute('src'));
+            }
+        });
+
 	}, false);
 
 	song.addEventListener('canplay', function() {});
