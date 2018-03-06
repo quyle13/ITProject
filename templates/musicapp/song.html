@@ -53,17 +53,21 @@
         </button>
         <hr>
     </div>
-    <div class="relative"><img src="{{ song.PictureURL }}" class="profile-photo">
+    <div class="relative">
+        <img src="{{ song.PictureURL }}" class="profile-photo">
         <h4>Details:</h4>
         <div class="row">
             <div class="col-sm-2 col-xs-3">
                 <p>Artist:</p>
                 <p>Album:</p>
-                <p>&nbsp;</p>
+                <p>Rank:</p>
+                <p>Release Date:&nbsp;</p>
             </div>
             <div class="col-sm-10 col-xs-9">
-                <p><a href="{% url 'artist' song.Artist.ArtistSlug %}">{{ song.Artist.Name }}</a></p>
-                <p><a href="{% url 'album' song.Artist.ArtistSlug song.Album.AlbumSlug %}">{{ song.Album.Title }}</a></p>
+                <p><a href="{% url 'artist' song.Artist.ArtistSlug %}">{{ song.Artist }}</a></p>
+                <p><a href="{% url 'album' song.Artist.ArtistSlug song.Album.AlbumSlug %}">{{ song.Album }}</a></p>
+                <p>{{ detail.0 }}</p>{#rank#}
+                <p>{{ detail.1 }}</p>{#realse data#}
             </div>
         </div>
         <div class="clearfix"></div>
@@ -78,7 +82,7 @@
                 <div class="col-sm-4 hidden-xs" id="lyrics">
                     <h5>Lyrics:</h5>
                     <hr>
-                    <p>Lyrics this song here</p>
+                    <p>{{ detail.2 }}</p> {#lyrics#}
                 </div>
             </div>
         </div>

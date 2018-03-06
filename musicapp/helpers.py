@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from musicapp.models import Artist, Album, Song
 from django.db import IntegrityError
 from django.contrib.sessions.backends.db import SessionStore
+import xml.etree.cElementTree as ET
 
 
 
@@ -60,6 +61,8 @@ def save_deezer_data_to_db(input):
         artist.Name = each_object['artist']['name']
         artist.PictureURL = each_object['artist']['picture_medium']
         artist.ArtistDeezerID = each_object['artist']['id']
+
+
         try:
             artist = Artist.objects.get(Name=artist.Name)
         except Artist.DoesNotExist:
@@ -91,6 +94,35 @@ def save_deezer_data_to_db(input):
             song = Song.objects.get(Title=song.Title)
         except Song.DoesNotExist:
             song.save()
+            pass
+
+# this is save data to data base album info related to the sepecific artist
+def save_deezer_data_to_db_artist_album(input, _artist_name, _artist_deezeer_id):
+    print('in call Dezzer API METHOD')
+
+    for key, value in input.items():
+        if key == 'data':
+            number_of_items = len(value)
+            print(key)
+            print(len(value))
+
+    # iterate all objects and save to data
+    for i in range(number_of_items):
+        print("start db")
+        each_object = input['data'][i]
+
+        album = Album()
+        album.Artist = _artist_name
+        album.Title = each_object['title']
+        album.PictureURL = each_object['cover_medium']
+        album.AlbumDeezerID = each_object['id']
+        album.ArtistDeezerID = _artist_deezeer_id
+        try:
+            album = Album.objects.get(Title=album.Title)
+            print("saved db")
+        except Album.DoesNotExist:
+            album.save()
+
             pass
 
 
@@ -199,3 +231,99 @@ def run_query(name,next_link):
     If Get method: return HTML page
     If POST method: call run_Query method to process
     '''
+
+
+def run_query_artist(_artist_name):
+    # query for related album
+    # Firstly, check our database
+    print("start")
+    returned_result = []
+    album_list = Album.objects.filter(Artist__Name__icontains=_artist_name)
+    print(album_list)
+    if album_list.exists():
+        print('There is album info in DB')
+        for each_album in album_list:
+            returned_result.append({'title': each_album.Title,
+                                    'ArtistSlug': each_album.Artist.ArtistSlug,
+                                    'AlbumSlug': each_album.AlbumSlug,
+                                    'SongSlug': '',
+                                    'PictureURL': each_album.PictureURL,
+                                    'type': 'album'})
+    # call deezer api
+    singer_name = Artist.objects.get(ArtistSlug=_artist_name)
+    artist_deezeer_id = str(singer_name.ArtistDeezerID)
+    print(artist_deezeer_id)
+    result = requests.get("https://api.deezer.com/artist/" + artist_deezeer_id + "/albums")
+    print(result)
+
+    # Check if the HTTP response is OK
+    if result is not None:
+        temp_result = result.json()
+        save_deezer_data_to_db_artist_album(temp_result, singer_name, artist_deezeer_id)
+        if 'next' in temp_result.keys(): # if the result has "next"
+            next_link = temp_result['next']
+            result = requests.get(next_link)
+            temp_result = result.json()
+            save_deezer_data_to_db_artist_album(temp_result, singer_name, artist_deezeer_id)
+            print("processed1")
+            for each_item in temp_result['data']:
+                print(each_item['title'])
+                if not any(d['AlbumSlug'] == slugify(each_item['title']) for d in returned_result):
+                    returned_result.append({'title': each_item['title'],
+                                            'ArtistSlug': slugify(_artist_name),
+                                            'AlbumSlug': slugify(each_item['title']),
+                                            'SongSlug': '',
+                                            'PictureURL': each_item['cover_medium'],
+                                            'type': 'album'})
+
+        else:# With the result has not "next"
+
+            for each_item in temp_result['data']:
+                if not any(d['AlbumSlug'] == slugify(each_item['title']) for d in returned_result):
+                    returned_result.append({'title': each_item['title'],
+                                            'ArtistSlug': slugify(_artist_name),
+                                            'AlbumSlug': slugify(each_item['title']),
+                                            'SongSlug': '',
+                                            'PictureURL': each_item['cover_medium'],
+                                            'type': 'album'})
+    print("processed2")
+    print(returned_result)
+    return returned_result
+
+
+def detail_artist(_artist_name):
+
+    singer_name = Artist.objects.get(ArtistSlug=_artist_name)
+    artist_deezeer_id = str(singer_name.ArtistDeezerID)
+    detail = requests.get("https://api.deezer.com/artist/" + artist_deezeer_id)
+    detail_dic = detail.json()
+
+    return detail_dic['nb_album'], detail_dic['nb_fan']
+
+
+def detail_song(_song_name, _artist_name):
+    song_name = Song.objects.get(SongSlug=_song_name)
+    song_deezeer_id = str(song_name.SongDeezerID)
+    detail = requests.get("https://api.deezer.com/track/" + song_deezeer_id)
+    detail_dic = detail.json()
+
+    replace_name = str(_artist_name)
+    replace_name = replace_name.replace('-', '%20')
+    replace_song_name = str(_song_name)
+    replace_song_name = replace_song_name.replace('-', '%20')
+
+    lyric = requests.get("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
+                         replace_name + "&song=" + replace_song_name)
+
+    # print("http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?artist=" +
+    #       replace_name + "&song=" + replace_song_name)
+    # print(lyric.content)
+
+    root = ET.fromstring(lyric.content)
+    for child in root.iter('{http://api.chartlyrics.com/}Lyric'):
+        print(child.text)
+        lyric_text = child.text
+
+    detail_dic['lyric'] = lyric_text
+
+    return detail_dic['rank'], detail_dic['release_date'], detail_dic['lyric']

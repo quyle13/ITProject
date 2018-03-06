@@ -1,6 +1,6 @@
 <div class="card selectable track">
     <div class="col-xs-9">
-        {% if not on_song_page %}
+        {% if not song_active %}
             <a href="{% url 'song' artist_name=song.Artist.ArtistSlug album_name=song.Album.AlbumSlug song_name=song.SongSlug %}">
                 <h4>{{ song.Title }}</h4>
             </a>

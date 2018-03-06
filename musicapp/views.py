@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from musicapp.models import UserProfile
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse
 from musicapp.forms import UserForm, CommentForm, RatingForm, PlaylistForm
 from .models import *
@@ -11,10 +11,11 @@ from django.db.models import Avg
 from musicapp.forms import UserForm, UserEditForm
 from django.core.files.storage import FileSystemStorage
 from musicapp.models import Artist, Album, Song
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 from musicapp.helpers import *
+import re
 import requests
 
 
@@ -175,12 +176,14 @@ def playlist(request, playlist_name):
     context_dict['playlist_songs'] = Song.objects.filter(playlist=context_dict['playlist']).distinct()
     return render(request, 'musicapp/playlist.html', context=context_dict)
 
+
 def search(request):
     context_dict = dict()
     context_dict['page_title'] = 'Search for Songs, Albums, Artists'
     context_dict['search_active'] = True
 
     page = request.GET.get('page')
+    print(page)
     # Clear all previous data for the first running
     if page is None:
         if 'keyword' in request.session:
@@ -189,6 +192,7 @@ def search(request):
             del request.session['returned_list']
 
     keyword = request.GET.get('searchValue')
+    print(keyword)
     # TODO:Ask Tutor about how to get submited value when user navigate beween pages
     # Temporarily process
     if keyword is None and page is not None:
@@ -197,10 +201,10 @@ def search(request):
         if 'returned_list' in request.session:
             returned_list = request.session.get('returned_list')
         else:
-            next_link =''
+            next_link = ''
             if 'next_link' in request.session:
                 next_link = request.session.get('next_link')
-            returned_list = run_query(keyword,next_link)
+            returned_list = run_query(keyword, next_link)
             request.session['returned_list'] = returned_list
 
         paginator = Paginator(returned_list['returned_result'], 24)
@@ -218,20 +222,23 @@ def search(request):
 
 
 def song(request, artist_name, album_name, song_name):
-    on_song_page = True
-    page_title = song_name + ' by: ' + artist_name + ' on: ' + album_name
+    context_dict = dict()
+    context_dict['page_title'] = song_name + ' by: ' + artist_name + ' on: ' + album_name
+    context_dict['song_active'] = True
+    context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'artist': artist_name,
+                                                'album': album_name,
+                                                'song': song_name,
+                                                'comment_page': 'song'})
 
-    comment_form = CommentForm({'author': request.user.username,
-                                'artist': artist_name,
-                                'album': album_name,
-                                'song': song_name,
-                                'comment_page': 'song'})
+    context_dict['rating_form'] = RatingForm({'author': request.user.username,
+                                              'artist': artist_name,
+                                              'album': album_name,
+                                              'song': song_name,
+                                              'rating_page': 'song'})
 
-    rating_form = RatingForm({'author': request.user.username,
-                              'artist': artist_name,
-                              'album': album_name,
-                              'song': song_name,
-                              'rating_page': 'song'})
+    context_dict['detail'] = detail_song(song_name, artist_name)
+    print(context_dict['detail'])
 
     artist = Artist.objects.filter(ArtistSlug=artist_name)[0]
     album = Album.objects.filter(AlbumSlug=album_name, Artist=artist)[0]
@@ -240,11 +247,11 @@ def song(request, artist_name, album_name, song_name):
     try:
         rates = Rating.objects.filter(Artist=artist_name,
                                       Album=album_name,
-                                      Song=song_name).order_by('-id')[:10]
+                                      Song=song_name).order_by('id')
         avg_rates = rates.aggregate(Avg('RatingValue'))
 
         if avg_rates['RatingValue__avg'] is not None:
-            avg_int = int(avg_rates['RatingValue__avg'])
+            context_dict['avg_int'] = int(avg_rates['RatingValue__avg'])
 
         comments = Comment.objects.filter(Artist=artist_name,
                                           Album=album_name,
@@ -253,29 +260,41 @@ def song(request, artist_name, album_name, song_name):
         for com in comments:
             comment_list.append(com)
 
+        context_dict['comment_list'] = comment_list
+
     except Exception as e:
         print(e)
 
-    return render(request, 'musicapp/song.html', locals())
+    context_dict['song'] = Song.objects.get(SongSlug=song_name)
+
+    return render(request, 'musicapp/song.html', context=context_dict)
 
 
 def artist(request, artist_name):
-    comment_form = CommentForm({'author': request.user.username,
-                                'artist': artist_name,
-                                'comment_page': 'artist'})
+    context_dict = dict()
+    context_dict['page_title'] = artist_name
+    context_dict['artist_active'] = True
+    context_dict['comment_form'] = CommentForm({'author': request.user.username,
+                                                'artist': artist_name,
+                                                'comment_page': 'artist'})
 
-    rating_form = RatingForm({'author': request.user.username,
-                              'artist': artist_name,
-                              'rating_page': 'artist'})
+    context_dict['rating_form'] = RatingForm({'author': request.user.username,
+                                              'artist': artist_name,
+                                              'rating_page': 'artist'})
+
+    context_dict['detail'] = detail_artist(artist_name)
+    context_dict['returned_list'] = run_query_artist(artist_name)
+    print("this is context")
+    print(context_dict)
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
                                       Album='',
-                                      Song='').order_by('-id')[:10]
+                                      Song='').order_by('id')
         avg_rates = rates.aggregate(Avg('RatingValue'))
 
         if avg_rates['RatingValue__avg'] is not None:
-            avg_int = int(avg_rates['RatingValue__avg'])
+            context_dict['avg_int'] = int(avg_rates['RatingValue__avg'])
 
         comments = Comment.objects.filter(Artist=artist_name,
                                           Album='',
@@ -283,13 +302,19 @@ def artist(request, artist_name):
         comment_list = []
         for com in comments:
             comment_list.append(com)
+
+        context_dict['comment_list'] = comment_list
     except Exception as e:
         print(e)
-    return render(request, 'musicapp/artist.html', locals())
+
+    context_dict['artist'] = Artist.objects.get(ArtistSlug=artist_name)
+    return render(request, 'musicapp/artist.html', context=context_dict)
 
 
 def album(request, artist_name, album_name):
     context_dict = dict()
+    context_dict['page_title'] = artist_name + ' on: ' + album_name
+    context_dict['album_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
                                                 'artist': artist_name,
                                                 'album': album_name,
@@ -299,35 +324,30 @@ def album(request, artist_name, album_name):
                                               'artist': artist_name,
                                               'album': album_name,
                                               'rating_page': 'album'})
-
     try:
-        context_dict['rates'] = Rating.objects.filter(Artist=artist_name,
-                                                      Album=album_name,
-                                                      Song='').order_by('-id')[:10]
-        context_dict['avg_rates'] = context_dict['rates'].aggregate(Avg('RatingValue'))
+        rates = Rating.objects.filter(Artist=artist_name,
+                                      Album=album_name,
+                                      Song='').order_by('id')
+        avg_rates = rates.aggregate(Avg('RatingValue'))
 
-        if context_dict['avg_rates']['RatingValue__avg'] is not None:
-            context_dict['avg_int'] = int(context_dict['avg_rates']['RatingValue__avg'])
+        if avg_rates['RatingValue__avg'] is not None:
+            context_dict['avg_int'] = int(avg_rates['RatingValue__avg'])
 
         comments = Comment.objects.filter(Artist=artist_name, Album=album_name, Song='').order_by('-id')[:10]
         comment_list = []
         for com in comments:
             comment_list.append(com)
-        context_dict['comments'] = comment_list
+        context_dict['comment_list'] = comment_list
+
     except Exception as e:
         print(e)
 
-    album = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
-    run_album_query(album.AlbumDeezerID, album.Artist.ArtistDeezerID)
-    songs = Song.objects.filter(Album=album)
+    context_dict['album'] = Album.objects.get(AlbumSlug=album_name, Artist__ArtistSlug=artist_name)
+    run_album_query(context_dict['album'].AlbumDeezerID, context_dict['album'].Artist.ArtistDeezerID)
+    context_dict['songs'] = Song.objects.filter(Album=context_dict['album'])
 
     if request.user.is_authenticated:
-        playlists = PlayList.objects.filter(UserID=request.user)
-        context_dict['playlists'] = playlists
-
-    context_dict['album'] = album
-    context_dict['songs'] = songs
-    context_dict['page_title'] = album.Title + ' by: ' + album.Artist.Name
+        context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
 
     return render(request, 'musicapp/album.html', context=context_dict)
 
@@ -374,8 +394,8 @@ def rating_post(request):
         return HttpResponseRedirect(
             '/view' + '/' + rate.Rating_page + '/' + rate.Artist + '/' + rate.Album + '/' + rate.Song)
 
-def next_song(request):
 
+def next_song(request):
     if request.method == 'GET':
 
         # Get the parameter given with the request
@@ -389,9 +409,9 @@ def next_song(request):
         songList = Song.objects.filter(Album=song.Album)
 
         for i in range(len(songList)):
-            if songList[i] == song and i != len(songList)-1:
-                nextSong = songList[i+1]
-            elif songList[i] == song and i == len(songList)-1:
+            if songList[i] == song and i != len(songList) - 1:
+                nextSong = songList[i + 1]
+            elif songList[i] == song and i == len(songList) - 1:
                 nextSong = songList[0]
 
     return HttpResponse(nextSong.PreviewURL + ' ' + nextSong.SongSlug + ' ' +
