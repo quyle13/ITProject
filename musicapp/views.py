@@ -6,6 +6,10 @@ from django.core.urlresolvers import reverse
 from django.db.models import Avg
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+import requests
+import json
+from lxml import html
+from datetime import datetime
 
 from musicapp.forms import CommentForm, RatingForm, PlaylistForm
 from musicapp.forms import UserForm, UserEditForm
@@ -16,6 +20,31 @@ from .models import *
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
+
+    # Scrape Songkick.com for events in glasgow
+    page = requests.get('https://www.songkick.com/metro_areas/24473-uk-glasgow')
+    tree = html.fromstring(page.content.decode('UTF-8'))
+    u_events = tree.findall('.//li[@title]')[:20]
+    context_dict['events'] = []
+
+    # Add each event to a dictionary
+    for event in u_events:
+        event_data = event.find('.//script[@type="application/ld+json"]')
+        event_data = json.loads(event_data.text)[0]
+
+        # get correct date format
+        date = datetime.strptime(event_data['startDate'][:10], '%Y-%m-%d').date()
+        link = event_data['url']
+        artist = event_data['name']
+        venue = event_data['location']['name']
+
+        # put events in a dict
+        result = {'date': date,
+                  'link': link,
+                  'artist': artist,
+                  'venue': venue}
+        context_dict['events'].append(result)
+
 
     # Get the songs ordred regarding the rate
     topSongs_list = []
@@ -34,7 +63,7 @@ def index(request):
 
     context_dict['top_songs'] = topSongs_list[:5]
     # context_dict['new_songs']    = newSongs_list
-    context_dict['top_albums'] = topAlbums_list[:5]
+    context_dict['top_albums'] = topAlbums_list[:6]
     # context_dict['new_albums']   = newAlbums_list
     context_dict['top_artists'] = topArtistes_list[:5]
     # context_dict['top_artists'] = newArtistes_list
@@ -215,7 +244,6 @@ def song(request, artist_name, album_name, song_name):
     context_dict['page_title'] = song_name + ' by: ' + artist_name + ' on: ' + album_name
     context_dict['song_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
-                                                'image': request.user.userprofile.profile_picture,
                                                 'artist': artist_name,
                                                 'album': album_name,
                                                 'song': song_name,
@@ -259,7 +287,6 @@ def artist(request, artist_name):
     context_dict = dict()
     context_dict['artist_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
-                                                'image': request.user.userprofile.profile_picture.__str__(),
                                                 'artist': artist_name,
                                                 'comment_page': 'artist'})
 
@@ -299,7 +326,6 @@ def album(request, artist_name, album_name):
     context_dict = dict()
     context_dict['album_active'] = True
     context_dict['comment_form'] = CommentForm({'author': request.user.username,
-                                                'image': request.user.userprofile.profile_picture,
                                                 'artist': artist_name,
                                                 'album': album_name,
                                                 'comment_page': 'album'})

@@ -178,7 +178,8 @@ def run_query(name, next_link):
             s["next_link"] = next_link
             s.save()
         else:
-            del s['next_link']
+            if 'next_link' in s:
+                del s['next_link']
             # result = requests.get(next_link)
             # temp_result = result.json()
             # save_deezer_data_to_db(temp_result)
@@ -290,7 +291,6 @@ def detail_song(_song_name, _artist_name):
 
     root = ET.fromstring(lyric.content)
     for child in root.iter('{http://api.chartlyrics.com/}Lyric'):
-        print(child.text)
         lyric_text = child.text
 
     detail_dic['lyric'] = lyric_text
