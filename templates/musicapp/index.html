@@ -49,14 +49,11 @@
         <div class="col-md-3 col-sm-3">
             <div class="tab-block">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#upcoming-releases" role="tab" data-toggle="tab">Upcoming Releases</a>
+                    <li class="active"><a href="#upcoming-events" role="tab" data-toggle="tab">Upcomming Events </a>
                     </li>
-                    <li><a href="#upcoming-events" role="tab" data-toggle="tab">Upcomming Events </a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane active tab-container-vertical" role="tabpanel" id="upcoming-releases">
-                    </div>
-                    <div class="tab-pane tab-container-vertical" role="tabpanel" id="upcoming-events">
+                    <div class="tab-pane active tab-container-vertical" role="tabpanel" id="upcoming-events">
                         {% for event in events %}
                             <div class="clipping">
                                 <h5>{{ event.artist }}</h5>
