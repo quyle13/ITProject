@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
@@ -6,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Avg
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from lxml import html
 
 from musicapp.forms import CommentForm, RatingForm, PlaylistForm
 from musicapp.forms import UserForm, UserEditForm
@@ -16,6 +20,31 @@ from .models import *
 def index(request):
     context_dict = dict()
     context_dict['page_title'] = 'Music App Homepage'
+
+    # Scrape Songkick.com for events in glasgow
+    page = requests.get('https://www.songkick.com/metro_areas/24473-uk-glasgow')
+    tree = html.fromstring(page.content.decode('UTF-8'))
+    u_events = tree.findall('.//li[@title]')[:20]
+    context_dict['events'] = []
+
+    # Add each event to a dictionary
+    for event in u_events:
+        event_data = event.find('.//script[@type="application/ld+json"]')
+        event_data = json.loads(event_data.text)[0]
+
+        # get correct date format
+        date = datetime.strptime(event_data['startDate'][:10], '%Y-%m-%d').date()
+        link = event_data['url']
+        artist = event_data['name']
+        venue = event_data['location']['name']
+
+        # put events in a dict
+        result = {'date': date,
+                  'link': link,
+                  'artist': artist,
+                  'venue': venue}
+        context_dict['events'].append(result)
+
 
     # Get the songs ordred regarding the rate
     topSongs_list = []
