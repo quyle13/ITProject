@@ -278,11 +278,8 @@ def song(request, artist_name, album_name, song_name):
     except Exception as e:
         pass
 
-    print('--------------------------------------------------------')
     artist = Artist.objects.get(ArtistSlug=artist_name)
     album = Album.objects.get(AlbumSlug=album_name, Artist=artist)
-    print(artist, album)
-    print('--------------------------------------------------------')
     context_dict['song'] = Song.objects.get(SongSlug=song_name, Artist=artist, Album=album)
 
     return render(request, 'musicapp/song.html', context=context_dict)
@@ -362,7 +359,7 @@ def album(request, artist_name, album_name):
     context_dict['songs'] = Song.objects.filter(Album=context_dict['album'])
     context_dict['page_title'] = context_dict['album'].Title + ' by: ' + context_dict['album'].Artist.Name
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_anonymous():
         context_dict['playlists'] = PlayList.objects.filter(UserID=request.user)
 
     return render(request, 'musicapp/album.html', context=context_dict)
