@@ -12,11 +12,11 @@ from musicapp.models import UserProfile, Artist, Album, Song, Comment, Rating
 def populate():
 
     # Add artists, albums and songs to the database
-    # searchRequest(name="ironmaiden", conn="artist")
-    # searchRequest(name="metallica",  conn="artist")
-    # searchRequest(name="megadeth",   conn="artist")
+    searchRequest(name="ironmaiden", conn="artist")
+    searchRequest(name="metallica",  conn="artist")
+    searchRequest(name="megadeth",   conn="artist")
     searchRequest(name="acdc",       conn="artist")
-    # searchRequest(name="mastodon",   conn="artist")
+    searchRequest(name="mastodon",   conn="artist")
 
     # Add rating and comment to all element
     print("Add rating and one comment to each artist")
