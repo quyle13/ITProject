@@ -59,7 +59,7 @@ def index(request):
     # Get the artists ordred regarding the rate
     topArtists_list = []
     for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:8]:
-        topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
+        topArtists_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
 
     context_dict['top_songs'] = topSongs_list[:5]
