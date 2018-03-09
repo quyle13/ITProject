@@ -57,15 +57,15 @@ def index(request):
         topAlbums_list.extend(Album.objects.filter(AlbumSlug=rate.Album))
 
     # Get the artists ordred regarding the rate
-    topArtistes_list = []
+    topArtists_list = []
     for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:5]:
-        topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
+        topArtists_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
 
     context_dict['top_songs'] = topSongs_list[:5]
     # context_dict['new_songs']    = newSongs_list
     context_dict['top_albums'] = topAlbums_list[:6]
     # context_dict['new_albums']   = newAlbums_list
-    context_dict['top_artists'] = topArtistes_list[:5]
+    context_dict['top_artists'] = topArtists_list[:5]
     # context_dict['top_artists'] = newArtistes_list
 
     return render(request, 'musicapp/index.html', context=context_dict)
@@ -255,7 +255,7 @@ def song(request, artist_name, album_name, song_name):
                                               'song': song_name,
                                               'rating_page': 'song'})
 
-    context_dict['detail'] = detail_song(song_name, artist_name)
+    context_dict['detail'] = detail_song(song_name, album_name, artist_name)
 
     try:
         rates = Rating.objects.filter(Artist=artist_name,
@@ -278,7 +278,12 @@ def song(request, artist_name, album_name, song_name):
     except Exception as e:
         pass
 
-    context_dict['song'] = Song.objects.get(SongSlug=song_name)
+    print('--------------------------------------------------------')
+    artist = Artist.objects.get(ArtistSlug=artist_name)
+    album = Album.objects.get(AlbumSlug=album_name, Artist=artist)
+    print(artist, album)
+    print('--------------------------------------------------------')
+    context_dict['song'] = Song.objects.get(SongSlug=song_name, Artist=artist, Album=album)
 
     return render(request, 'musicapp/song.html', context=context_dict)
 
