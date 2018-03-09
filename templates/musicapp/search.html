@@ -5,7 +5,7 @@
          {% csrf_token %}
         <div class="input-group">
             <div class="input-group-addon"><span><i class="glyphicon glyphicon-search"></i></span></div>
-            <input class="form-control" value="{{ keyword }}" type="text" placeholder="I am looking for.." name="searchValue"/>
+            <input autofocus class="form-control" value="{{ keyword }}" type="text" placeholder="I am looking for.." name="searchValue"/>
             <div class="input-group-btn">
                 <button class="btn btn-default" type="submit">Search</button>
             </div>
