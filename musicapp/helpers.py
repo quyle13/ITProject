@@ -21,12 +21,13 @@ def save_deezer_album_songs_to_db(result, album_id, artist_id):
         song.AlbumDeezerID = album.AlbumDeezerID
         song.ArtistDeezerID = artist.ArtistDeezerID
         song.SongDeezerID = data['id']
+
         try:
             song = Song.objects.get(Title=song.Title)
         except Song.DoesNotExist:
             song.save()
+        except Song.MultipleObjectsReturned:
             pass
-    pass
 
 
 def run_album_query(album_id, artist_id):
@@ -63,6 +64,7 @@ def save_deezer_data_to_db(input):
             artist = Artist.objects.get(Name=artist.Name)
         except Artist.DoesNotExist:
             artist.save()
+        except Artist.MultipleObjectsReturned:
             pass
 
         album = Album()
@@ -75,6 +77,7 @@ def save_deezer_data_to_db(input):
             album = Album.objects.get(Title=album.Title)
         except Album.DoesNotExist:
             album.save()
+        except Album.MultipleObjectsReturned:
             pass
 
         song = Song()
@@ -90,6 +93,7 @@ def save_deezer_data_to_db(input):
             song = Song.objects.get(Title=song.Title)
         except Song.DoesNotExist:
             song.save()
+        except Song.MultipleObjectsReturned:
             pass
 
 
@@ -113,9 +117,8 @@ def save_deezer_data_to_db_artist_album(input, _artist_name, _artist_deezeer_id)
             album = Album.objects.get(Title=album.Title)
         except Album.DoesNotExist:
             album.save()
-
+        except Album.MultipleObjectsReturned:
             pass
-
 
 '''
 Process search songs/albums/artist
