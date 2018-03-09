@@ -22,7 +22,7 @@ def index(request):
     context_dict['page_title'] = 'Music App Homepage'
 
     # Scrape Songkick.com for events in glasgow
-    page = requests.get('https://www.songkick.com/metro_areas/24473-uk-glasgow')
+    page = requests.get('http://www.songkick.com/metro_areas/24473-uk-glasgow')
     tree = html.fromstring(page.content.decode('UTF-8'))
     u_events = tree.findall('.//li[@title]')[:20]
     context_dict['events'] = []
