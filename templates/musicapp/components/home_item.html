@@ -9,17 +9,6 @@
         </div>
     {% endfor %}
 
-    <!-- {% elif type == 'new_song' %}
-    {% for result in new_songs %}
-        <div class="card selectable">
-            <a href="{% url 'song' result.ArtistSlug result.AlbumSlug result.SongSlug %}">
-                <img class="img-responsive" src="{{ result.PictureURL }}"/>
-            </a>
-            <p>{{ result.Title }}</p>
-            <span class="text-capitalize song">song</span>
-        </div>
-    {% endfor %} -->
-
 {% elif type == 'top_album' %}
     {% for result in top_albums %}
         <div class="card selectable">
@@ -31,17 +20,6 @@
         </div>
     {% endfor %}
 
-    <!-- {% elif type == 'new_album' %}
-    {% for result in new_albums %}
-        <div class="card selectable">
-            <a href="{% url 'album' result.ArtistSlug result.AlbumSlug %}">
-                <img class="img-responsive" src="{{ result.PictureURL }}"/>
-            </a>
-            <p>{{ result.Title }}</p>
-            <span class="text-capitalize album">album</span>
-        </div>
-    {% endfor %} -->
-
 {% elif type == 'top_artist' %}
     {% for result in top_artists %}
         <div class="card selectable">
@@ -52,18 +30,4 @@
             <span class="text-capitalize artist">artist</span>
         </div>
     {% endfor %}
-
-    <!-- {% elif type == 'new_artist' %}
-    {% for result in top_artists %}
-        <div class="card selectable">
-            <a href="{% url 'artist' result.ArtistSlug %}">
-                <img class="img-responsive" src="{{ result.PictureURL }}"/>
-            </a>
-            <p>{{ result.Name }}</p>
-            <span class="text-capitalize artist">artist</span>
-        </div>
-    {% endfor %} -->
-
-{% else %}
-    <p style="color: red;text-align: center"> There are no records found. Please try with different criteria !</p>
 {% endif %}

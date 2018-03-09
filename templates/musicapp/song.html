@@ -3,7 +3,11 @@
 {% block content %}
     {% include 'musicapp/components/rate_modal.html' with type='Song' %}
     <div class="relative">
-        <h2>{{ song.Title }}</h2>
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>{{ song.Title }}</h2>
+            </div>
+        </div>
         {% if avg_int == 5 %}
             <div id="rating">
                 <i class="glyphicon glyphicon-star"></i>

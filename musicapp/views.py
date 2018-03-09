@@ -48,18 +48,19 @@ def index(request):
 
     # Get the songs ordred regarding the rate
     topSongs_list = []
-    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='song')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='song')[:8]:
         topSongs_list.extend(Song.objects.filter(SongSlug=rate.Song))
 
     # Get the albums ordred regarding the rate
     topAlbums_list = []
-    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='album')[:5]:
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='album')[:8]:
         topAlbums_list.extend(Album.objects.filter(AlbumSlug=rate.Album))
 
     # Get the artists ordred regarding the rate
-    topArtists_list = []
-    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:5]:
-        topArtists_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
+    topArtistes_list = []
+    for rate in Rating.objects.order_by('RatingValue').filter(Rating_page='artist')[:8]:
+        topArtistes_list.extend(Artist.objects.filter(ArtistSlug=rate.Artist))
+
 
     context_dict['top_songs'] = topSongs_list[:5]
     # context_dict['new_songs']    = newSongs_list
