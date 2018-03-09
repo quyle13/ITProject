@@ -278,8 +278,10 @@ def detail_artist(_artist_name):
     return detail_dic['nb_album'], detail_dic['nb_fan']
 
 
-def detail_song(_song_name, _artist_name):
-    song_name = Song.objects.get(SongSlug=_song_name)
+def detail_song(_song_name, _album_name, _artist_name):
+    artist_name = Artist.objects.get(ArtistSlug=_artist_name)
+    album_name = Album.objects.get(AlbumSlug=_album_name, Artist=artist_name)
+    song_name = Song.objects.get(SongSlug=_song_name, Artist=artist_name, Album=album_name)
     song_deezeer_id = str(song_name.SongDeezerID)
     detail = requests.get("https://api.deezer.com/track/" + song_deezeer_id)
     detail_dic = detail.json()
